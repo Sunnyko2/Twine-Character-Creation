@@ -1,3 +1,5 @@
+<!-- Character Creation Start -->
+:: Character Creation Start
 <div class="creation-intro-container">
     <h2 class="intro-heading">Begin Your Journey</h2>
     
@@ -6,10 +8,11 @@
         
         <p>Will you rise as a technomancer weaving code and spellcraft? A shadowblade merging steel with stealth? Or perhaps something this world has never seen before?</p>
         
-        <p>The lines between technology and sorcery have blurred. In this age of <em>Cybermancy</em> </p>
+        <p>The lines between technology and sorcery have blurred. In this age of <em>Cybermancy</em>...</p>
     </div>
     
-<div class="intro-buttons">
-    <<button "Return to Main Menu">><<goto "Title Menu">><</button>>
-    <<button "Create Your Character">><<goto "Name and Pronouns">><</button>>
+    <div class="intro-buttons">
+        <<button "Return to Main Menu">><<goto "Title Menu">><</button>>
+        <<button "Create Your Character">><<goto "Name and Pronouns">><</button>>
+    </div>
 </div>
