@@ -1,3 +1,5 @@
+<!-- Primary Stat Selection -->
+:: Primary Stat Selection
 <<nobr>>
 <<if !$class || $class.trim() === "">>
     <<goto "Class Selection">>
@@ -16,6 +18,33 @@
     }>>
 <</if>>
 <</nobr>>
+
+<div class="creation-progress">
+    <div class="progress-step completed">
+        <span>1</span>
+        <span class="progress-step-label">Name</span>
+    </div>
+    <div class="progress-step completed">
+        <span>2</span>
+        <span class="progress-step-label">Race</span>
+    </div>
+    <div class="progress-step completed">
+        <span>3</span>
+        <span class="progress-step-label">Background</span>
+    </div>
+    <div class="progress-step completed">
+        <span>4</span>
+        <span class="progress-step-label">Class</span>
+    </div>
+    <div class="progress-step active">
+        <span>5</span>
+        <span class="progress-step-label">Stats</span>
+    </div>
+    <div class="progress-step">
+        <span>6</span>
+        <span class="progress-step-label">Finish</span>
+    </div>
+</div>
 
 <h2>Distribute Your Attributes</h2>
 
@@ -44,6 +73,20 @@
                     +2 Intelligence
                 <<case "Thief">>
                     +2 Dexterity
+                <<case "Mercenary">>
+                    +2 Strength
+                <<case "Outcast">>
+                    +1 Intelligence, +1 Charisma
+                <<case "Augmented">>
+                    +1 Strength, +1 Dexterity
+                <<case "Street Rat">>
+                    +1 Dexterity, +1 Intelligence
+                <<case "Cultist">>
+                    +1 Intelligence, +1 Charisma
+                <<case "Wanderer">>
+                    +1 Dexterity, +1 Charisma
+                <<case "Corporate">>
+                    +1 Intelligence, +1 Charisma
                 <<default>>
                     +2 to Primary Attribute
             <</switch>>
@@ -53,11 +96,13 @@
         </div>
     </div>
 
-    <<button "Continue">>
-        <<if $statPoints eq 0>>
-            <<goto "Character Summary">>
-        <<else>>
-            <<run UI.alert("You still have attribute points to spend!", {title: "Points Remaining"})>>
-        <</if>>
-    <</button>>
+    <div class="navigation-controls">
+        <<button "Continue to Character Summary">>
+            <<if $statPoints eq 0>>
+                <<goto "Character Summary">>
+            <<else>>
+                <<run UI.alert("You still have attribute points to spend!", {title: "Points Remaining"})>>
+            <</if>>
+        <</button>>
+    </div>
 </div>
