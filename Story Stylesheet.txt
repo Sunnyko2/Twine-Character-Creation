@@ -44,57 +44,6 @@
     --z-modal: 900; /* Lower than SugarCube's dialog z-index */
 }
 
-/* Background image for title screen */
-.title-screen-container {
-    background-image: url('https://github.com/Sunnyko2/twine-images-final/blob/main/Background%20Imahe%20Final.png?raw=true');
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    min-height: 100vh;
-    width: 100%;
-    margin: 0;
-    padding: var(--spacing-lg);
-    max-width: none;
-    overflow: hidden;
-}
-
-/* Add a semi-transparent overlay to ensure text is readable */
-.title-screen-container::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: linear-gradient(135deg, 
-        rgba(10, 11, 18, 0.5) 0%, 
-        rgba(26, 27, 35, 0.5) 50%, 
-        rgba(10, 11, 18, 0.5) 100%);
-    background-size: 400% 400%;
-    animation: gradientShift 15s ease infinite;
-    z-index: 0;
-}
-
-/* Ensure content appears above the overlay */
-.title-logo, .title-menu, .version-info {
-    position: relative;
-    z-index: 1;
-}
-
-/* Make title text more visible */
-.game-title {
-    text-shadow: 0 0 20px rgba(0, 0, 0, 0.8), 0 0 30px rgba(0, 255, 187, 0.6);
-}
-
-.game-subtitle {
-    text-shadow: 0 0 15px rgba(0, 0, 0, 0.8), 0 0 20px rgba(255, 107, 107, 0.6);
-}
-
 /* Base styles */
 html {
     margin: 0;
