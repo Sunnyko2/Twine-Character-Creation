@@ -1,6 +1,10 @@
+<!-- Background Selection -->
+:: Background Selection
+<<nobr>>
 <<if !$race>>
     <<goto "Race Selection">>
 <</if>>
+<</nobr>>
 
 <div class="creation-progress">
     <div class="progress-step completed">
@@ -165,7 +169,7 @@
 
 <div id="selected-background" class="selected-class-display">
     <<if $tempBackground != "">>
-        <<print "Selected background: " + $tempBackground>>
+        Selected background: <<print $tempBackground>>
         <br>
         <<print $tempBackgroundDesc>>
     <</if>>
@@ -173,11 +177,12 @@
 
 <div class="navigation-controls">
     <<button "Continue to Class Selection">>
-        <<if $tempBackground.trim() !== "">>
+        <<if $tempBackground and $tempBackground.trim() !== "">>
             <<set $background to $tempBackground>>
+            <<set $backgroundDesc to $tempBackgroundDesc>>
             <<goto "Class Selection">>
         <<else>>
-            <<replace "#error-msg">>Please select a background.<</replace>>
+            <<replace "#selected-background">>Please select a background.<</replace>>
         <</if>>
     <</button>>
 </div>
