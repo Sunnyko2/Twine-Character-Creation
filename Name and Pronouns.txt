@@ -1,3 +1,5 @@
+<!-- Name and Pronouns -->
+:: Name and Pronouns
 <h2>Choose Your Name and Pronouns</h2>
 
 <!-- Name Entry Section -->
@@ -82,7 +84,7 @@
 </div>
 
 <div class="navigation-controls">
-    <<button "Continue to Race Selection" class="next-button">>
+    <<button "Continue to Race Selection">>
         <<if $tempName and $tempName.trim() !== "">>
             <<set _nameError to setup.validateName($tempName)>>
             <<if _nameError>>
