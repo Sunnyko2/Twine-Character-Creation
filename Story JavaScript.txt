@@ -1,400 +1,1139 @@
+/* Base Variables */
+:root {
+    /* Color scheme */
+    --neon-primary: #00FFBB;
+    --neon-primary-dim: rgba(0, 255, 187, 0.1);
+    --neon-primary-mid: rgba(0, 255, 187, 0.3);
+    --neon-secondary: #FF6B6B;
+    --neon-secondary-dim: rgba(255, 107, 107, 0.1);
+    --dark-primary: #0A0B12;
+    --dark-secondary: #1A1B23;
+    --medieval-gold: #FFD700;
+    
+    /* Spacing */
+    --spacing-xs: 0.5em;
+    --spacing-sm: 1em;
+    --spacing-md: 1.5em;
+    --spacing-lg: 2em;
+    --spacing-xl: 3em;
+    
+    /* Font sizes */
+    --font-size-xs: 0.8em;
+    --font-size-sm: 0.9em;
+    --font-size-md: 1em;
+    --font-size-lg: 1.2em;
+    --font-size-xl: 1.5em;
+    --font-size-xxl: 2em;
+    --font-size-title: 4em;
+    
+    /* Border radius */
+    --border-radius: 4px;
+    
+    /* Transitions */
+    --transition-speed: 0.3s;
+    
+    /* Shadows */
+    --glow-small: 0 0 10px var(--neon-primary);
+    --glow-medium: 0 0 15px var(--neon-primary);
+    --glow-large: 0 0 20px var(--neon-primary);
+    
+    /* Z-index layers - adjusted to work with SugarCube's UI */
+    --z-background: 0;
+    --z-content: 10;
+    --z-overlay: 100;
+    --z-modal: 900; /* Lower than SugarCube's dialog z-index */
+}
 
-// Initialize story variables
-Config.history.maxStates = 10;
+/* Base styles */
+html {
+    margin: 0;
+    padding: 0;
+    font-family: 'Arial', sans-serif;
+    background-color: var(--dark-primary);
+    color: #E0E0E0;
+    height: 100%;
+    min-height: 100vh;
+    line-height: 1.6;
+    font-size: 16px;
+}
 
-// Character creation state management
-setup.characterDefaults = {
-    name: "",
-    race: "",
-    background: "",
-    backgroundDesc: "",
-    class: "",
-    classDesc: "",
-    pronouns: "",
-    statPoints: 10,
-    validName: false,
-    appliedBackgroundBonus: false,
-    stats: {
-        strength: 10,
-        dexterity: 10,
-        intelligence: 10,
-        charisma: 10
+body {
+    margin: 0;
+    padding: 0;
+    font-size: inherit;
+}
+
+/* Font size classes for accessibility */
+html.text-small { font-size: 0.85em; }
+html.text-medium { font-size: 1em; }
+html.text-large { font-size: 1.2em; }
+html.text-extra-large { font-size: 1.4em; }
+
+/* High contrast mode with improved contrast ratios */
+html.high-contrast {
+    --neon-primary: #00FF00;
+    --neon-primary-dim: rgba(0, 255, 0, 0.1);
+    --neon-primary-mid: rgba(0, 255, 0, 0.3);
+    --neon-secondary: #FF0000;
+    --neon-secondary-dim: rgba(255, 0, 0, 0.1);
+    --dark-primary: #000000;
+    --dark-secondary: #0A0A0A;
+    color: #FFFFFF;
+}
+
+html.high-contrast button, 
+html.high-contrast a, 
+html.high-contrast .title-button, 
+html.high-contrast .back-button, 
+html.high-contrast .next-button {
+    color: #FFFFFF;
+    border-color: #FFFFFF;
+    background: #333333;
+    text-shadow: none;
+}
+
+html.high-contrast .selected-class-display,
+html.high-contrast .class-option,
+html.high-contrast .name-entry,
+html.high-contrast .pronoun-selection,
+html.high-contrast .stat-distribution,
+html.high-contrast .details-panel {
+    background: #333333;
+    border-color: #FFFFFF;
+}
+
+html.high-contrast h1, 
+html.high-contrast h2, 
+html.high-contrast h3 {
+    color: #FFFFFF;
+    text-shadow: none;
+}
+
+/* Enhanced focus indicators */
+html.enhanced-focus button:focus,
+html.enhanced-focus a:focus,
+html.enhanced-focus input:focus,
+html.enhanced-focus select:focus,
+html.enhanced-focus [role="button"]:focus {
+    outline: 3px solid var(--neon-secondary) !important;
+    outline-offset: 3px !important;
+    box-shadow: 0 0 0 3px rgba(255, 107, 107, 0.4) !important;
+}
+
+/* Reduce animations */
+html.reduce-animations * {
+    animation-duration: 0.001s !important;
+    transition-duration: 0.001s !important;
+}
+
+/* SugarCube Story UI */
+#story {
+    max-width: 100%;
+    margin: 0;
+    padding: 0;
+    background: var(--dark-primary);
+    min-height: 100vh;
+}
+
+#passages {
+    max-width: 1200px;
+    width: 90%;
+    margin: 0 auto;
+    padding: var(--spacing-lg) 0;
+}
+
+/* Remove the rectangle background */
+.passage {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+    max-width: 100%;
+}
+
+/* Enhanced headers */
+h1, h2 {
+    text-align: center;
+    color: var(--medieval-gold);
+    font-family: Arial, sans-serif;
+    margin-bottom: var(--spacing-lg);
+    position: relative;
+    text-shadow: 0 0 10px var(--neon-secondary),
+                 0 0 20px rgba(255, 215, 0, 0.3);
+}
+
+h1::after, h2::after {
+    content: '';
+    position: absolute;
+    bottom: -0.5em;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 150px;
+    height: 2px;
+    background: linear-gradient(90deg, 
+        transparent,
+        var(--neon-primary),
+        var(--medieval-gold),
+        var(--neon-primary),
+        transparent
+    );
+}
+
+h3 {
+    color: var(--neon-primary);
+    margin: var(--spacing-md) 0 var(--spacing-sm);
+}
+
+/* Title Page Styles */
+.title-screen-container {
+    background-image: url('https://github.com/Sunnyko2/twine-images-final/blob/main/Background%20Imahe%20Final.png?raw=true');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    width: 100%;
+    margin: 0;
+    padding: var(--spacing-lg);
+    max-width: none;
+    overflow: hidden;
+    text-align: center;
+}
+
+/* Add a semi-transparent overlay to ensure text is readable */
+.title-screen-container::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, 
+        rgba(10, 11, 18, 0.5) 0%, 
+        rgba(26, 27, 35, 0.5) 50%, 
+        rgba(10, 11, 18, 0.5) 100%);
+    background-size: 400% 400%;
+    animation: gradientShift 15s ease infinite;
+    z-index: 0;
+}
+
+/* Ensure content appears above the overlay */
+.title-logo, .title-menu, .version-info {
+    position: relative;
+    z-index: 1;
+}
+
+/* Make title text more visible */
+.game-title {
+    text-shadow: 0 0 20px rgba(0, 0, 0, 0.8), 0 0 30px rgba(0, 255, 187, 0.6);
+    font-size: var(--font-size-title);
+    margin-bottom: 0.2em;
+    color: var(--neon-primary);
+    letter-spacing: 0.15em;
+}
+
+.game-subtitle {
+    text-shadow: 0 0 15px rgba(0, 0, 0, 0.8), 0 0 20px rgba(255, 107, 107, 0.6);
+    font-size: var(--font-size-xl);
+    margin-bottom: var(--spacing-lg);
+    color: var(--neon-secondary);
+    letter-spacing: 0.1em;
+}
+
+.title-logo {
+    margin-bottom: var(--spacing-xl);
+}
+
+.title-menu {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+    margin: var(--spacing-lg) 0;
+    width: 100%;
+    max-width: 300px;
+}
+
+.version-info {
+    margin-top: var(--spacing-xl);
+    opacity: 0.7;
+    font-size: var(--font-size-xs);
+}
+
+/* Touch-enhanced interactive elements */
+.title-button, .glow-button, button, a {
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+    transition: transform var(--transition-speed) ease, 
+                background-color var(--transition-speed) ease,
+                box-shadow var(--transition-speed) ease;
+}
+
+.title-button, .glow-button {
+    width: 100%;
+    padding: var(--spacing-sm);
+    border: 2px solid var(--neon-primary);
+    background: var(--neon-primary-dim);
+    color: var(--neon-primary);
+    font-size: var(--font-size-lg);
+    letter-spacing: 2px;
+    cursor: pointer;
+    border-radius: var(--border-radius);
+    will-change: transform, background-color, box-shadow;
+}
+
+.title-button:hover, .glow-button:hover {
+    background: var(--neon-primary);
+    color: var(--dark-primary);
+    transform: scale(1.05);
+    box-shadow: var(--glow-medium);
+}
+
+/* Creation intro container */
+.creation-intro-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: var(--spacing-lg);
+    text-align: center;
+}
+
+.intro-heading {
+    color: var(--medieval-gold);
+    font-size: var(--font-size-xxl);
+    margin-bottom: var(--spacing-sm);
+}
+
+.intro-text {
+    line-height: 1.6;
+    margin-bottom: var(--spacing-lg);
+}
+
+.intro-text p {
+    margin-bottom: var(--spacing-sm);
+}
+
+.intro-buttons {
+    display: flex;
+    justify-content: center;
+    gap: var(--spacing-md);
+    margin-top: var(--spacing-lg);
+}
+
+/* Progress tracker styling */
+.creation-progress {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: var(--spacing-xl);
+    position: relative;
+    padding: 0 var(--spacing-sm);
+}
+
+.creation-progress::before {
+    content: '';
+    position: absolute;
+    top: 15px;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: var(--neon-primary-mid);
+    z-index: var(--z-background);
+}
+
+.progress-step {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    z-index: var(--z-content);
+}
+
+.progress-step span:first-child {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: var(--dark-primary);
+    border: 2px solid var(--neon-primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 0.5em;
+}
+
+.progress-step.active span:first-child {
+    background: var(--neon-primary);
+    color: var(--dark-primary);
+    box-shadow: var(--glow-small);
+}
+
+.progress-step.completed span:first-child {
+    background: var(--neon-secondary);
+    color: var(--dark-primary);
+}
+
+.progress-step-label {
+    font-size: var(--font-size-xs);
+    text-align: center;
+    max-width: 80px;
+}
+
+/* Name and Pronoun Entry Styles */
+.name-entry {
+    text-align: center;
+    margin: var(--spacing-lg) 0;
+    background: rgba(10, 11, 18, 0.7);
+    padding: var(--spacing-lg);
+    border: 1px solid var(--neon-primary);
+    border-radius: var(--border-radius);
+}
+
+#name-box {
+    margin: var(--spacing-sm) 0 var(--spacing-lg);
+}
+
+input[type="text"] {
+    background: var(--neon-primary-dim);
+    border: 1px solid var(--neon-primary);
+    color: #E0E0E0;
+    padding: 0.8em 1em;
+    border-radius: var(--border-radius);
+    width: 100%;
+    max-width: 300px;
+    margin: 0 auto;
+    display: block;
+    font-size: var(--font-size-md);
+}
+
+input[type="text"]:focus {
+    outline: 2px solid var(--neon-primary);
+    box-shadow: var(--glow-small);
+}
+
+.name-suggestions {
+    margin-top: var(--spacing-lg);
+}
+
+.suggestion-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5em;
+    justify-content: center;
+    margin-top: var(--spacing-sm);
+}
+
+.suggestion-buttons button {
+    font-size: var(--font-size-xs);
+    padding: 0.5em 1em;
+}
+
+.pronoun-selection {
+    text-align: center;
+    margin: var(--spacing-lg) 0;
+    background: rgba(10, 11, 18, 0.7);
+    padding: var(--spacing-lg);
+    border: 1px solid var(--neon-primary);
+    border-radius: var(--border-radius);
+}
+
+.pronoun-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.8em;
+    justify-content: center;
+    margin: var(--spacing-sm) 0;
+}
+
+.pronoun-selection a {
+    display: inline-block;
+    padding: 0.7em 2em;
+    background: var(--neon-primary-dim);
+    color: var(--neon-primary);
+    border: 1px solid var(--neon-primary);
+    border-radius: var(--border-radius);
+    margin: 0 0.5em;
+    text-decoration: none;
+}
+
+.pronoun-selection a:hover {
+    background: var(--neon-primary);
+    color: var(--dark-primary);
+    transform: scale(1.05);
+}
+
+.selected-pronoun-display {
+    min-height: 1.5em;
+    margin-top: var(--spacing-sm);
+    font-weight: bold;
+    color: var(--neon-primary);
+}
+
+/* Error messages */
+.error {
+    color: var(--neon-secondary);
+    margin-top: 0.5em;
+    font-weight: bold;
+    min-height: 1.5em;
+}
+
+/* Class/Background/Race selection styling */
+.class-options {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: var(--spacing-md);
+    margin: var(--spacing-lg) 0;
+}
+
+.class-option {
+    background: rgba(10, 11, 18, 0.7);
+    border: 1px solid var(--neon-primary);
+    border-radius: var(--border-radius);
+    padding: var(--spacing-md);
+    transition: all var(--transition-speed) ease;
+}
+
+.class-option:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 0 15px rgba(0, 255, 187, 0.2);
+}
+
+.class-option button {
+    width: 100%;
+    text-align: center;
+}
+
+.artwork-container, .pixel-art-container {
+    height: 100px;
+    background: rgba(0, 0, 0, 0.3);
+    margin-bottom: var(--spacing-sm);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid rgba(0, 255, 187, 0.3);
+    border-radius: var(--border-radius);
+}
+
+.selected-class-display {
+    margin: var(--spacing-lg) 0;
+    padding: var(--spacing-md);
+    background: rgba(10, 11, 18, 0.7);
+    border: 1px solid var(--neon-primary);
+    border-radius: var(--border-radius);
+    animation: fadeIn var(--transition-speed) ease-in-out;
+    min-height: 4em;
+}
+
+.class-bonuses {
+    margin-top: var(--spacing-sm);
+    padding: var(--spacing-sm);
+    background: var(--neon-primary-dim);
+    border-radius: var(--border-radius);
+}
+
+/* Button styling for standard buttons */
+button {
+    display: inline-block;
+    padding: 0.7em 1.5em;
+    background: var(--neon-primary-dim);
+    color: var(--neon-primary);
+    border: 1px solid var(--neon-primary);
+    border-radius: var(--border-radius);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    cursor: pointer;
+    font-size: var(--font-size-sm);
+}
+
+button:hover {
+    background: var(--neon-primary);
+    color: var(--dark-primary);
+    transform: scale(1.05);
+}
+
+button:focus {
+    outline: 2px solid var(--neon-secondary);
+    outline-offset: 2px;
+}
+
+button[data-select] {
+    width: 100%;
+    margin-top: auto;
+}
+
+/* Disabled button style */
+button[disabled], 
+.disabled-button,
+button[aria-disabled="true"] {
+    opacity: 0.6;
+    cursor: not-allowed;
+    border-color: #666;
+    color: #888;
+    background: rgba(255, 255, 255, 0.05);
+}
+
+button[disabled]:hover, 
+.disabled-button:hover,
+button[aria-disabled="true"]:hover {
+    background: rgba(255, 255, 255, 0.05);
+    color: #888;
+    transform: none;
+    box-shadow: none;
+}
+
+/* Details panel */
+.details-panel {
+    background: rgba(10, 11, 18, 0.7);
+    border: 1px solid var(--neon-primary);
+    border-radius: var(--border-radius);
+    padding: var(--spacing-lg);
+    animation: fadeIn var(--transition-speed) ease-in-out;
+    margin-top: var(--spacing-md);
+}
+
+.details-panel h3 {
+    color: var(--neon-primary);
+    margin-bottom: var(--spacing-sm);
+    font-size: var(--font-size-lg);
+}
+
+/* Perk and skill lists */
+.perk-list {
+    margin: var(--spacing-md) 0;
+    padding: var(--spacing-sm);
+    background: rgba(0, 255, 187, 0.05);
+    border-radius: var(--border-radius);
+}
+
+.perk-item {
+    margin-bottom: 0.5em;
+    position: relative;
+    padding-left: 1.5em;
+}
+
+.perk-item::before {
+    content: '•';
+    position: absolute;
+    left: 0.5em;
+    color: var(--neon-primary);
+}
+
+/* Navigation controls */
+.navigation-controls {
+    display: flex;
+    justify-content: space-between;
+    margin-top: var(--spacing-lg);
+}
+
+.back-button {
+    display: inline-block;
+    padding: 0.7em 1.5em;
+    background: var(--neon-secondary-dim);
+    color: var(--neon-secondary);
+    border: 1px solid var(--neon-secondary);
+    border-radius: var(--border-radius);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    cursor: pointer;
+    text-decoration: none;
+}
+
+.back-button:hover {
+    background: var(--neon-secondary);
+    color: var(--dark-primary);
+    transform: scale(1.05);
+}
+
+.back-button:focus {
+    outline: 2px solid var(--neon-primary);
+    outline-offset: 2px;
+}
+
+button.next-button {
+    display: inline-block;
+    background: var(--neon-primary-dim);
+    color: var(--neon-primary);
+    border: 1px solid var(--neon-primary);
+    border-radius: var(--border-radius);
+    padding: 0.7em 1.5em;
+    text-decoration: none;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+button.next-button:hover {
+    background: var(--neon-primary);
+    color: var(--dark-primary);
+    transform: scale(1.05);
+}
+
+.disabled-next {
+    display: inline-block;
+    padding: 0.7em 1.5em;
+    background: rgba(255, 255, 255, 0.1);
+    color: #666;
+    border: 1px solid #444;
+    border-radius: var(--border-radius);
+    cursor: not-allowed;
+}
+
+/* Stat distribution */
+.stat-distribution {
+    max-width: 800px;
+    margin: var(--spacing-lg) auto;
+    padding: var(--spacing-lg);
+    background: rgba(10, 11, 18, 0.7);
+    border: 1px solid var(--neon-primary);
+    border-radius: var(--border-radius);
+}
+
+.points-remaining {
+    text-align: center;
+    font-size: var(--font-size-lg);
+    color: var(--neon-primary);
+    padding: var(--spacing-sm);
+    background: var(--neon-primary-dim);
+    border-radius: var(--border-radius);
+    margin-bottom: var(--spacing-sm);
+}
+
+.stat-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: var(--spacing-sm);
+    margin: var(--spacing-md) 0;
+}
+
+.stat-block {
+    background: var(--dark-secondary);
+    border: 1px solid var(--neon-primary);
+    padding: var(--spacing-sm);
+    border-radius: var(--border-radius);
+    display: grid;
+    grid-template-columns: auto 1fr auto auto auto;
+    gap: 0.5em;
+    align-items: center;
+}
+
+.stat-block label {
+    font-weight: bold;
+}
+
+.stat-block button {
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: var(--font-size-lg);
+    padding: 0;
+    background: var(--neon-primary-dim);
+    margin: 0 2px;
+}
+
+/* Stat explanation */
+.stat-explanation {
+    margin-top: var(--spacing-md);
+    font-size: var(--font-size-sm);
+    border-top: 1px solid var(--neon-primary-mid);
+    padding-top: var(--spacing-sm);
+}
+
+.background-bonus {
+    display: inline-block;
+    padding: 0.3em 0.8em;
+    background: var(--neon-primary-dim);
+    border-radius: var(--border-radius);
+    margin: 0.5em 0;
+}
+
+/* Character card for summary */
+.character-card {
+    background: rgba(10, 11, 18, 0.8);
+    border: 1px solid var(--neon-primary);
+    border-radius: var(--border-radius);
+    margin: var(--spacing-lg) 0;
+    overflow: hidden;
+}
+
+.character-header {
+    background: var(--neon-primary-dim);
+    padding: var(--spacing-md);
+    border-bottom: 1px solid var(--neon-primary);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.character-name {
+    color: var(--medieval-gold);
+    margin: 0;
+    font-size: var(--font-size-xl);
+}
+
+.character-subtitle {
+    color: var(--neon-secondary);
+    font-style: italic;
+}
+
+.character-section {
+    padding: var(--spacing-md);
+    border-bottom: 1px solid var(--neon-primary-mid);
+}
+
+.character-section-title {
+    color: var(--neon-primary);
+    margin-bottom: var(--spacing-sm);
+}
+
+.character-section p {
+    margin: 0.5em 0;
+    line-height: 1.5;
+}
+
+.character-info-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: var(--spacing-sm);
+}
+
+.character-info-item {
+    padding: 0.8em;
+    background: var(--neon-primary-dim);
+    border-radius: var(--border-radius);
+}
+
+.character-info-label {
+    font-size: var(--font-size-xs);
+    color: var(--neon-secondary);
+    margin-bottom: 0.3em;
+}
+
+.character-stats-summary {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 0.8em;
+}
+
+.stat-summary-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: var(--spacing-sm);
+    background: var(--neon-primary-dim);
+    border-radius: var(--border-radius);
+}
+
+.stat-summary-label {
+    font-size: var(--font-size-xs);
+    margin-bottom: 0.3em;
+    color: var(--neon-secondary);
+}
+
+.stat-summary-value {
+    font-size: var(--font-size-lg);
+    font-weight: bold;
+    color: var(--neon-primary);
+}
+
+/* Completion page */
+.completion-message {
+    text-align: center;
+    background: rgba(10, 11, 18, 0.7);
+    border: 1px solid var(--neon-primary);
+    border-radius: var(--border-radius);
+    padding: var(--spacing-xl);
+    margin: var(--spacing-lg) 0;
+}
+
+.character-save {
+    margin: var(--spacing-lg) 0;
+}
+
+#save-message {
+    color: var(--neon-primary);
+    height: 2em;
+    margin: var(--spacing-sm) 0;
+}
+
+.completion-controls {
+    display: flex;
+    justify-content: center;
+    gap: var(--spacing-sm);
+    margin-top: var(--spacing-lg);
+}
+
+/* Accessibility menu button */
+#accessibility-menu-button {
+    position: fixed;
+    top: 1em;
+    right: 1em;
+    z-index: var(--z-overlay);
+    padding: 0.5em 1em;
+    font-size: var(--font-size-xs);
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid var(--neon-primary);
+    color: var(--neon-primary);
+    border-radius: var(--border-radius);
+}
+
+/* Tooltip styling */
+.tooltip-trigger {
+    position: relative;
+}
+
+.tooltip {
+    display: none;
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--dark-secondary);
+    color: #fff;
+    padding: 0.5em;
+    border-radius: 4px;
+    font-size: 0.85em;
+    width: max-content;
+    max-width: 200px;
+    z-index: 100;
+    border: 1px solid var(--neon-primary);
+    box-shadow: 0 0 5px rgba(0, 255, 187, 0.5);
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
     }
-};
-
-// Central error handler
-setup.handleError = function(context, error) {
-    console.error(`Error in ${context}:`, error);
-    if (Config.debug) {
-        UI.alert(`Error in ${context}: ${error.message}`);
+    to {
+        opacity: 1;
+        transform: translateY(0);
     }
-    return false; // Return a value for function chaining
-};
+}
 
-// Debounce function for event handling
-setup.debounce = function(func, wait) {
-    let timeout;
-    return function() {
-        const context = this;
-        const args = arguments;
-        clearTimeout(timeout);
-        timeout = setTimeout(() => func.apply(context, args), wait);
-    };
-};
-
-// Initialize or validate character state
-setup.validateProgressionState = function() {
-    try {
-        // Initialize character variables if they don't exist
-        for (const [key, value] of Object.entries(setup.characterDefaults)) {
-            if (State.variables[key] === undefined) {
-                if (typeof value === 'object' && value !== null) {
-                    State.variables[key] = jQuery.extend(true, {}, value);
-                } else {
-                    State.variables[key] = value;
-                }
-            }
-        }
-        return true;
-    } catch (e) {
-        return setup.handleError("validateProgressionState", e);
+@keyframes glow {
+    0% {
+        box-shadow: 0 0 5px var(--neon-primary);
     }
-};
-
-// Name validation with special character restrictions
-setup.validateName = function(name) {
-    try {
-        if (!name) return "Please enter a name.";
-        if (name.trim().length < 2) return "Name must be at least 2 characters long.";
-        if (name.length > 20) return "Name must be less than 20 characters.";
-        if (!/^[a-zA-Z\s'-]+$/.test(name)) return "Name can only contain letters, spaces, hyphens and apostrophes.";
-        return null;
-    } catch (e) {
-        setup.handleError("validateName", e);
-        return "Error validating name.";
+    50% {
+        box-shadow: 0 0 15px var(--neon-primary), 0 0 30px var(--neon-primary-dim);
     }
-};
-
-// Point-buy system functions
-setup.increaseStat = function(stat) {
-    try {
-        if (!State.variables.stats) {
-            State.variables.stats = jQuery.extend(true, {}, setup.characterDefaults.stats);
-        }
-        
-        if (State.variables.statPoints > 0 && State.variables.stats[stat] < 18) {
-            State.variables.stats[stat]++;
-            State.variables.statPoints--;
-            setup.updateStatDisplay();
-            return true;
-        }
-        return false;
-    } catch (e) {
-        return setup.handleError("increaseStat", e);
+    100% {
+        box-shadow: 0 0 5px var(--neon-primary);
     }
-};
+}
 
-setup.decreaseStat = function(stat) {
-    try {
-        if (!State.variables.stats) {
-            State.variables.stats = jQuery.extend(true, {}, setup.characterDefaults.stats);
-            return false;
-        }
-        
-        if (State.variables.stats[stat] > 8) {
-            State.variables.stats[stat]--;
-            State.variables.statPoints++;
-            setup.updateStatDisplay();
-            return true;
-        }
-        return false;
-    } catch (e) {
-        return setup.handleError("decreaseStat", e);
+@keyframes gradientShift {
+    0% {
+        background-position: 0% 50%;
     }
-};
-
-setup.updateStatDisplay = function() {
-    try {
-        if ($('#points-remaining').length) {
-            $('#points-remaining').text(State.variables.statPoints);
-        }
-        
-        if (State.variables.stats) {
-            for (let stat in State.variables.stats) {
-                if ($(`#${stat}-value`).length) {
-                    $(`#${stat}-value`).text(State.variables.stats[stat]);
-                    
-                    const modifier = Math.floor((State.variables.stats[stat] - 10) / 2);
-                    const modText = modifier >= 0 ? `+${modifier}` : modifier;
-                    
-                    if ($(`#${stat}-modifier`).length) {
-                        $(`#${stat}-modifier`).text(modText);
-                    }
-                    
-                    // Update button states
-                    if (State.variables.stats[stat] <= 8) {
-                        $(`#decrease-${stat}`).attr('disabled', true).attr('aria-disabled', 'true');
-                    } else {
-                        $(`#decrease-${stat}`).attr('disabled', false).attr('aria-disabled', 'false');
-                    }
-                    
-                    if (State.variables.stats[stat] >= 18 || State.variables.statPoints <= 0) {
-                        $(`#increase-${stat}`).attr('disabled', true).attr('aria-disabled', 'true');
-                    } else {
-                        $(`#increase-${stat}`).attr('disabled', false).attr('aria-disabled', 'false');
-                    }
-                }
-            }
-        }
-        return true;
-    } catch (e) {
-        console.error("Error in updateStatDisplay:", e);
-        return false;
+    50% {
+        background-position: 100% 50%;
     }
-};
-
-// Name suggestion system
-setup.namePatterns = {
-    noble: ["Aldrich", "Blackwood", "Constantine", "Devereux", "Highwind", "Ravencrest", "Sterling", "Wintervale"],
-    scholar: ["Archibald", "Benedict", "Cornelius", "Thaddeus", "Grimoire", "Lightweaver", "Sage", "Wisewater"],
-    thief: ["Raven", "Shadow", "Swift", "Whisper", "Dagger", "Nightshade", "Silentfoot", "Vex"],
-    mercenary: ["Axe", "Blade", "Hunter", "Steel", "Ironclad", "Redsteel", "Stormfist", "Warhawk"],
-    outcast: ["Exile", "Lost", "Nameless", "Wraith", "Cipher", "Ghostwalker", "None", "Void"],
-    augmented: ["Chrome", "Nexus", "Prime", "Vector", "Cypher", "Matrix", "Surge", "Zero"],
-    streetrat: ["Rat", "Scrapper", "Spark", "Wire", "Gutter", "Junk", "Rust", "Scrap"],
-    cultist: ["Cipher", "Devotee", "Oracle", "Seeker", "Darkwhisper", "Mindweaver", "Truthseeker", "Voidcaller"],
-    wanderer: ["Drift", "Roam", "Storm", "Wind", "Dustwalker", "Pathfinder", "Stormchaser", "Wayfarer"],
-    corporate: ["Ash", "Frost", "Pierce", "Vale", "Diamond", "Goldweaver", "Platinumhand", "Silversmith"]
-};
-
-setup.suggestName = function(type) {
-    try {
-        if (setup.namePatterns[type]) {
-            let names = setup.namePatterns[type];
-            return names[Math.floor(Math.random() * names.length)];
-        }
-        return "Unknown Type";
-    } catch (e) {
-        setup.handleError("suggestName", e);
-        return "Error";
+    100% {
+        background-position: 0% 50%;
     }
-};
+}
 
-// UI Initialization functions
-setup.initTooltips = function() {
-    try {
-        $('.tooltip-trigger').off('mouseenter mouseleave');
-        $('.tooltip-trigger').hover(
-            function() {
-                $(this).find('.tooltip').fadeIn(200);
-            },
-            function() {
-                $(this).find('.tooltip').fadeOut(200);
-            }
-        );
-        return true;
-    } catch (e) {
-        return setup.handleError("initTooltips", e);
+/* Media queries for responsive design */
+@media (max-width: 768px) {
+    .class-options, .selection-grid {
+        grid-template-columns: 1fr;
     }
-};
-
-// Background selection with bonus stat calculations
-setup.selectBackground = function(background) {
-    try {
-        if (!State.variables.stats) {
-            State.variables.stats = jQuery.extend(true, {}, setup.characterDefaults.stats);
-        }
-        
-        State.variables.background = background;
-        
-        // Only apply bonuses if they haven't been applied yet
-        if (!State.variables.appliedBackgroundBonus) {
-            switch(background) {
-                case "Noble":
-                    State.variables.stats.charisma += 2;
-                    break;
-                case "Scholar":
-                    State.variables.stats.intelligence += 2;
-                    break;
-                case "Thief":
-                    State.variables.stats.dexterity += 2;
-                    break;
-                case "Mercenary":
-                    State.variables.stats.strength += 2;
-                    break;
-                case "Outcast":
-                    State.variables.stats.intelligence += 1;
-                    State.variables.stats.charisma += 1;
-                    break;
-                case "Augmented":
-                    State.variables.stats.strength += 1;
-                    State.variables.stats.dexterity += 1;
-                    break;
-                case "Street Rat":
-                    State.variables.stats.dexterity += 1;
-                    State.variables.stats.intelligence += 1;
-                    break;
-                case "Cultist":
-                    State.variables.stats.intelligence += 1;
-                    State.variables.stats.charisma += 1;
-                    break;
-                case "Wanderer":
-                    State.variables.stats.dexterity += 1;
-                    State.variables.stats.charisma += 1;
-                    break;
-                case "Corporate":
-                    State.variables.stats.intelligence += 1;
-                    State.variables.stats.charisma += 1;
-                    break;
-            }
-            State.variables.appliedBackgroundBonus = true;
-        }
-        
-        setup.updateStatDisplay();
-        return true;
-    } catch (e) {
-        return setup.handleError("selectBackground", e);
+    
+    body {
+        font-size: 0.9em;
     }
-};
-
-// Initialize a new character
-setup.initializeCharacter = function() {
-    try {
-        // Reset all character properties to defaults
-        for (const [key, value] of Object.entries(setup.characterDefaults)) {
-            if (typeof value === 'object' && value !== null) {
-                State.variables[key] = jQuery.extend(true, {}, value);
-            } else {
-                State.variables[key] = value;
-            }
-        }
-        return true;
-    } catch (e) {
-        setup.handleError("initializeCharacter", e);
-        return false;
+    
+    .creation-progress {
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 1em;
     }
-};
-
-// Custom macro for character stat blocks in the point-buy system
-Macro.add('statBlock', {
-    handler: function() {
-        try {
-            if (this.args.length < 1) {
-                return this.error('The <<statBlock>> macro requires a stat name as an argument');
-            }
-            
-            const stat = this.args[0];
-            
-            // Ensure stats are initialized
-            if (!State.variables.stats) {
-                State.variables.stats = jQuery.extend(true, {}, setup.characterDefaults.stats);
-            }
-            
-            // If the requested stat doesn't exist yet, initialise it
-            if (!(stat in State.variables.stats)) {
-                State.variables.stats[stat] = 10;
-            }
-            
-            const value = State.variables.stats[stat];
-            const modifier = Math.floor((value - 10) / 2);
-            const modifierText = (modifier >= 0) ? `+${modifier}` : `${modifier}`;
-            
-            // Use SugarCube's event handling approach instead of direct onclick
-            const output = `
-            <div class="stat-block tooltip-trigger" aria-label="${stat.charAt(0).toUpperCase() + stat.slice(1)} stat block">
-                <label for="${stat}-value">${stat.charAt(0).toUpperCase() + stat.slice(1)}</label>
-                <span id="${stat}-value" aria-live="polite">${value}</span>
-                <button id="decrease-${stat}" aria-label="Decrease ${stat}" 
-                        ${value <= 8 ? 'disabled aria-disabled="true"' : ''}>-</button>
-                <button id="increase-${stat}" aria-label="Increase ${stat}" 
-                        ${(State.variables.statPoints <= 0 || value >= 18) ? 'disabled aria-disabled="true"' : ''}>+</button>
-                <span id="${stat}-modifier" aria-label="${stat} modifier">${modifierText}</span>
-                <div class="tooltip">Base ${stat} score. Modifier shown is ${modifierText}.</div>
-            </div>`;
-            
-            $(this.output).wiki(output);
-            
-            // Attach event handlers *after* adding to DOM
-            $(this.output).find(`#increase-${stat}`).on('click', function() {
-                if (State.variables.statPoints > 0 && State.variables.stats[stat] < 18) {
-                    State.variables.stats[stat]++;
-                    State.variables.statPoints--;
-                    // Update display
-                    $(`#${stat}-value`).text(State.variables.stats[stat]);
-                    const newMod = Math.floor((State.variables.stats[stat] - 10) / 2);
-                    const newModText = (newMod >= 0) ? `+${newMod}` : `${newMod}`;
-                    $(`#${stat}-modifier`).text(newModText);
-                    $('#points-remaining').text(State.variables.statPoints);
-                    
-                    // Update button states
-                    if (State.variables.stats[stat] >= 18) {
-                        $(this).attr('disabled', true).attr('aria-disabled', 'true');
-                    }
-                    $(`#decrease-${stat}`).attr('disabled', false).attr('aria-disabled', 'false');
-                    
-                    if (State.variables.statPoints <= 0) {
-                        $('.stat-block button[id^="increase-"]').attr('disabled', true).attr('aria-disabled', 'true');
-                    }
-                }
-            });
-            
-            $(this.output).find(`#decrease-${stat}`).on('click', function() {
-                if (State.variables.stats[stat] > 8) {
-                    State.variables.stats[stat]--;
-                    State.variables.statPoints++;
-                    // Update display
-                    $(`#${stat}-value`).text(State.variables.stats[stat]);
-                    const newMod = Math.floor((State.variables.stats[stat] - 10) / 2);
-                    const newModText = (newMod >= 0) ? `+${newMod}` : `${newMod}`;
-                    $(`#${stat}-modifier`).text(newModText);
-                    $('#points-remaining').text(State.variables.statPoints);
-                    
-                    // Update button states
-                    if (State.variables.stats[stat] <= 8) {
-                        $(this).attr('disabled', true).attr('aria-disabled', 'true');
-                    }
-                    $(`#increase-${stat}`).attr('disabled', false).attr('aria-disabled', 'false');
-                    
-                    if (State.variables.statPoints > 0) {
-                        $('.stat-block button[id^="increase-"]').each(function() {
-                            const targetStat = $(this).attr('id').replace('increase-', '');
-                            if (State.variables.stats[targetStat] < 18) {
-                                $(this).attr('disabled', false).attr('aria-disabled', 'false');
-                            }
-                        });
-                    }
-                }
-            });
-        } catch (e) {
-            return this.error(`Error in statBlock macro: ${e.message}`);
-        }
+    
+    .creation-progress::before {
+        display: none
+}
+    
+    .progress-step {
+        margin: 0 0.5em 1em;
     }
-});
+    
+    .pronoun-buttons, .suggestion-buttons {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .navigation-controls {
+        flex-direction: column;
+        gap: 1em;
+    }
+    
+    .stat-block {
+        grid-template-columns: 1fr auto auto auto;
+    }
+    
+    .stat-block label {
+        grid-column: 1 / -1;
+        text-align: center;
+    }
+    
+    .character-header {
+        flex-direction: column;
+    }
+}
 
-// Event handlers - Story startup
-$(document).one(':storyready', function() {
-    // Initialize character state
-    setup.validateProgressionState();
-});
+@media (max-width: 480px) {
+    html {
+        font-size: 14px;
+    }
+    
+    .game-title {
+        font-size: 2.5em;
+    }
+    
+    .game-subtitle {
+        font-size: 1.2em;
+    }
+    
+    #passages {
+        width: 95%;
+        padding: var(--spacing-sm) 0;
+    }
+    
+    .stat-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .character-info-grid, .character-stats-summary {
+        grid-template-columns: 1fr;
+    }
+}
 
-// Create settings for accessibility options
-Setting.addHeader("Accessibility", "Options to improve game accessibility");
+/* SugarCube-specific compatibility styles */
+#ui-dialog {
+    background-color: var(--dark-secondary);
+    border: 2px solid var(--neon-primary);
+    border-radius: var(--border-radius);
+    box-shadow: 0 0 20px rgba(0, 255, 187, 0.3);
+}
 
-Setting.addList("fontSize", {
-    label: "Text Size",
-    desc: "Change the size of text throughout the game",
-    list: ["small", "medium", "large", "extra-large"],
-    default: "medium"
-});
+#ui-dialog-titlebar {
+    background-color: var(--dark-primary);
+    border-bottom: 1px solid var(--neon-primary);
+}
 
-Setting.addToggle("highContrast", {
-    label: "High Contrast Mode",
-    desc: "Increases contrast for better readability",
-    default: false
-});
+#ui-dialog-title {
+    color: var(--neon-primary);
+}
 
-Setting.addToggle("reduceAnimations", {
-    label: "Reduce Animations",
-    desc: "Minimizes or removes animations that may cause discomfort",
-    default: false
-});
+#ui-dialog-close {
+    color: var(--neon-secondary);
+}
+
+#ui-dialog-body {
+    background-color: var(--dark-secondary);
+    color: #E0E0E0;
+}
+
+.ui-close {
+    background-color: var(--neon-primary-dim);
+    color: var(--neon-primary);
+    border: 1px solid var(--neon-primary);
+}
+
+.ui-close:hover {
+    background-color: var(--neon-primary);
+    color: var(--dark-primary);
+}
+
+/* Accessibility and mobile friendly focus/active states */
+@media (hover: hover) {
+    a:hover, button:hover, .title-button:hover, .glow-button:hover {
+        transform: scale(1.05);
+    }
+}
+
+@media (hover: none) {
+    a:active, button:active, .title-button:active, .glow-button:active {
+        background-color: var(--neon-primary);
+        color: var(--dark-primary);
+    }
+}
+
+/* Ensure readable focus states even without hover */
+a:focus, button:focus, input:focus, select:focus {
+    outline: 2px solid var(--neon-secondary);
+    outline-offset: 2px;
+}
+
+/* Additional custom macro support */
+.macro-statBlock {
+    margin-bottom: var(--spacing-sm);
+}
+
+/* Remove scrollbars for aesthetic reasons but keep functionality */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--dark-primary);
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--neon-primary-dim);
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--neon-primary);
+}
+
+/* Ensure overflows are handled gracefully */
+body, html, #story, #passages, .passage {
+    overflow-x: hidden;
+}
+
+/* Support for the custom statBlock macro */
+.stat-block #strength-value,
+.stat-block #dexterity-value,
+.stat-block #intelligence-value,
+.stat-block #charisma-value {
+    font-weight: bold;
+    text-align: center;
+}
+
+.stat-block #strength-modifier,
+.stat-block #dexterity-modifier,
+.stat-block #intelligence-modifier,
+.stat-block #charisma-modifier {
+    font-size: 0.9em;
+    color: var(--neon-secondary);
+    width: 2em;
+    text-align: center;
+}
+
+/* ARIA live regions for dynamic content */
+[aria-live] {
+    border: 0;
+    clip: rect(0 0 0 0);
+    height: 1px;
+    margin: -1px;
+    overflow: hidden;
+    padding: 0;
+    position: absolute;
+    width: 1px;
+}
+
+[aria-live="polite"] {
+    display: block;
+    height: auto;
+    margin: 0;
+    overflow: visible;
+    position: static;
+    width: auto;
+}
