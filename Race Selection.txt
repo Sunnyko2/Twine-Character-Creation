@@ -1,0 +1,192 @@
+<div class="creation-progress">
+    <div class="progress-step completed">
+        <span>1</span>
+        <span class="progress-step-label">Name</span>
+    </div>
+    <div class="progress-step active">
+        <span>2</span>
+        <span class="progress-step-label">Race</span>
+    </div>
+    <div class="progress-step">
+        <span>3</span>
+        <span class="progress-step-label">Background</span>
+    </div>
+    <div class="progress-step">
+        <span>4</span>
+        <span class="progress-step-label">Class</span>
+    </div>
+    <div class="progress-step">
+        <span>5</span>
+        <span class="progress-step-label">Stats</span>
+    </div>
+    <div class="progress-step">
+        <span>6</span>
+        <span class="progress-step-label">Finish</span>
+    </div>
+</div>
+
+<h2>Choose Your Race</h2>
+
+<div class="class-options">
+    <!-- Neo-Elves -->
+    <div class="class-option">
+        <div class="artwork-container">[Neo-Elf Art]</div>
+        <<button "Neo-Elves">>
+            <<set $tempRace to "Neo-Elves">>
+            <<set $tempRaceDesc to "Graceful and long-lived, these elves have embraced technological enhancements, refining their bodies with precision implants and neural upgrades. Known for their artistry and intellect, they often hold influential roles in society, from scholars to elite operatives.">>
+            <<replace "#selected-race">>
+                Selected race: Neo-Elves<br>
+                <<print $tempRaceDesc>>
+            <</replace>>
+        <</button>>
+    </div>
+    
+    <!-- Dwarven Machinists -->
+    <div class="class-option">
+        <div class="artwork-container">[Dwarf Art]</div>
+        <<button "Dwarven Machinists">>
+            <<set $tempRace to "Dwarven Machinists">>
+            <<set $tempRaceDesc to "Short, sturdy, and incredibly skilled with machinery, dwarves have transitioned from traditional craftsmanship to engineering marvels. Many operate underground workshops, designing powerful constructs and advanced armour.">>
+            <<replace "#selected-race">>
+                Selected race: Dwarven Machinists<br>
+                <<print $tempRaceDesc>>
+            <</replace>>
+        <</button>>
+    </div>
+    
+    <!-- Ork Titans -->
+    <div class="class-option">
+        <div class="artwork-container">[Ork Art]</div>
+        <<button "Ork Titans">>
+            <<set $tempRace to "Ork Titans">>
+            <<set $tempRaceDesc to "Towering figures of raw strength, orks blend natural resilience with heavy augmentation. Some enhance their frames with reinforced plating, while others modify their physiology for greater speed and endurance. Whether warriors, enforcers, or gladiators, they thrive in high-stakes combat.">>
+            <<replace "#selected-race">>
+                Selected race: Ork Titans<br>
+                <<print $tempRaceDesc>>
+            <</replace>>
+        <</button>>
+    </div>
+    
+    <!-- Gnome Technominds -->
+    <div class="class-option">
+        <div class="artwork-container">[Gnome Art]</div>
+        <<button "Gnome Technominds">>
+            <<set $tempRace to "Gnome Technominds">>
+            <<set $tempRaceDesc to "Quick-witted and endlessly curious, gnomes are pioneers in innovation, merging logic with creativity. Their small stature is offset by their unparalleled skill in designing intricate devices, crafting illusions, and navigating digital realms. Some even transfer their consciousness into artificial bodies to achieve immortality.">>
+            <<replace "#selected-race">>
+                Selected race: Gnome Technominds<br>
+                <<print $tempRaceDesc>>
+            <</replace>>
+        <</button>>
+    </div>
+    
+    <!-- Draconic Kin -->
+    <div class="class-option">
+        <div class="artwork-container">[Draconic Art]</div>
+        <<button "Draconic Kin">>
+            <<set $tempRace to "Draconic Kin">>
+            <<set $tempRaceDesc to "Born of ancient, powerful bloodlines, Draconic Kin possess a natural affinity for elemental forces. Some refine their abilities with bio-reactive plating and internal energy cores, while others cultivate their lineage's raw might, breathing fire or controlling lightning. Their presence commands respect—and sometimes fear.">>
+            <<replace "#selected-race">>
+                Selected race: Draconic Kin<br>
+                <<print $tempRaceDesc>>
+            <</replace>>
+        <</button>>
+    </div>
+    
+    <!-- Splicers -->
+    <div class="class-option">
+        <div class="artwork-container">[Splicer Art]</div>
+        <<button "Splicers">>
+            <<set $tempRace to "Splicers">>
+            <<set $tempRaceDesc to "Genetically modified beings infused with traits from various species, Splicers walk the line between human and something more. Some have feline agility, others reptilian resilience, while a few develop abilities beyond natural limits. Many are outcasts, but their unique traits make them invaluable as scouts, spies, and warriors.">>
+            <<replace "#selected-race">>
+                Selected race: Splicers<br>
+                <<print $tempRaceDesc>>
+            <</replace>>
+        <</button>>
+    </div>
+    
+    <!-- Necrokin -->
+    <div class="class-option">
+        <div class="artwork-container">[Necrokin Art]</div>
+        <<button "Necrokin">>
+            <<set $tempRace to "Necrokin">>
+            <<set $tempRaceDesc to "Revenants sustained by a fusion of ancient sorcery and regenerative technology, Necrokin exist between life and death. Whether resurrected warriors, lost souls given a second chance, or seekers of forbidden knowledge, they are unnerving to many but possess insights beyond mortal comprehension.">>
+            <<replace "#selected-race">>
+                Selected race: Necrokin<br>
+                <<print $tempRaceDesc>>
+            <</replace>>
+        <</button>>
+    </div>
+    
+    <!-- Soulforged -->
+    <div class="class-option">
+        <div class="artwork-container">[Soulforged Art]</div>
+        <<button "Soulforged">>
+            <<set $tempRace to "Soulforged">>
+            <<set $tempRaceDesc to "Once machines, now individuals, the Soulforged were constructed for a purpose—but have long since forged their own path. Their forms range from sleek humanoids to towering armoured figures, their existence a fusion of willpower and design. Some seek freedom, others purpose, but all struggle with the question: what makes a person?">>
+            <<replace "#selected-race">>
+                Selected race: Soulforged<br>
+                <<print $tempRaceDesc>>
+            <</replace>>
+        <</button>>
+    </div>
+    
+    <!-- Celestials -->
+    <div class="class-option">
+        <div class="artwork-container">[Celestial Art]</div>
+        <<button "Celestials">>
+            <<set $tempRace to "Celestials">>
+            <<set $tempRaceDesc to "Born from the remnants of divine ancestry, Celestials radiate an aura of mystery and power. Their bioluminescent markings shift with their emotions, and some develop abilities that blur the line between magic and advanced science. Whether healers, prophets, or warriors, they move through the world with an almost otherworldly presence.">>
+            <<replace "#selected-race">>
+                Selected race: Celestials<br>
+                <<print $tempRaceDesc>>
+            <</replace>>
+        <</button>>
+    </div>
+    
+    <!-- Riftborn -->
+    <div class="class-option">
+        <div class="artwork-container">[Riftborn Art]</div>
+        <<button "Riftborn">>
+            <<set $tempRace to "Riftborn">>
+            <<set $tempRaceDesc to "Marked by exposure to unstable dimensional energies, Riftborn exist slightly out of sync with reality. Their eyes shimmer with shifting hues, their voices sometimes overlapping with echoes of themselves. Some can phase through walls, others distort time itself, making them unpredictable yet highly sought after in both battle and espionage.">>
+            <<replace "#selected-race">>
+                Selected race: Riftborn<br>
+                <<print $tempRaceDesc>>
+            <</replace>>
+        <</button>>
+    </div>
+    
+    <!-- Humans -->
+    <div class="class-option">
+        <div class="artwork-container">[Human Art]</div>
+        <<button "Humans">>
+            <<set $tempRace to "Humans">>
+            <<set $tempRaceDesc to "Versatile, adaptive, and relentless, humans thrive in every aspect of society, from sprawling megacities to the fringes of the known world. Some embrace body augmentation to compete with stronger or longer-lived races, while others rely on cunning, ambition, or sheer willpower.">>
+            <<replace "#selected-race">>
+                Selected race: Humans<br>
+                <<print $tempRaceDesc>>
+            <</replace>>
+        <</button>>
+    </div>
+</div>
+
+<div id="selected-race" class="selected-class-display">
+    <<if $tempRace != "">>
+        <<print "Selected race: " + $tempRace>>
+        <br>
+        <<print $tempRaceDesc>>
+    <</if>>
+</div>
+
+<div class="navigation-controls">
+    <<button "Continue to Background Selection">>
+        <<if $tempRace.trim() !== "">>
+            <<set $race to $tempRace>>
+            <<goto "Background Selection">>
+        <<else>>
+            <<replace "#error-msg">>Please select a race.<</replace>>
+        <</if>>
+    <</button>>
+</div>

@@ -1,0 +1,68 @@
+<<nobr>>
+<<if !$pronouns || $pronouns.trim() === "">>
+    <<goto "Character Summary">>
+<</if>>
+<</nobr>>
+
+<div class="creation-progress">
+    <div class="progress-step completed">
+        <span>1</span>
+        <span class="progress-step-label">Name</span>
+    </div>
+    <div class="progress-step completed">
+        <span>2</span>
+        <span class="progress-step-label">Race</span>
+    </div>
+    <div class="progress-step completed">
+        <span>3</span>
+        <span class="progress-step-label">Background</span>
+    </div>
+    <div class="progress-step completed">
+        <span>4</span>
+        <span class="progress-step-label">Class</span>
+    </div>
+    <div class="progress-step completed">
+        <span>5</span>
+        <span class="progress-step-label">Stats</span>
+    </div>
+    <div class="progress-step completed active">
+        <span>6</span>
+        <span class="progress-step-label">Finish</span>
+    </div>
+</div>
+
+<h2>Character Creation Complete!</h2>
+
+<div class="completion-message">
+    <p>Congratulations, <<print $name>>! Your journey awaits.</p>
+    
+    <div class="character-save">
+        <p>Would you like to save your character?</p>
+        <<button "Save Character">>
+            <<script>>
+                try { 
+                    const result = window.saveCharacter(); 
+                    $("#save-message").html("Character saved successfully!"); 
+                } catch(e) { 
+                    $("#save-message").html("Error saving: " + e.message); 
+                }
+            <</script>>
+        <</button>>
+    </div>
+    
+    <div id="save-message"></div>
+    
+    <div class="completion-controls">
+        <<link "Begin Adventure" "Start Game">>
+        <<button "Create Another Character">>
+            <<script>>
+                try {
+                    window.initializeCharacter();
+                    Engine.play("Name and Pronouns");
+                } catch(e) {
+                    UI.alert("Error creating new character: " + e.message);
+                }
+            <</script>>
+        <</button>>
+    </div>
+</div>

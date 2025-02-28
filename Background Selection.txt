@@ -1,0 +1,183 @@
+<<if !$race>>
+    <<goto "Race Selection">>
+<</if>>
+
+<div class="creation-progress">
+    <div class="progress-step completed">
+        <span>1</span>
+        <span class="progress-step-label">Name</span>
+    </div>
+    <div class="progress-step completed">
+        <span>2</span>
+        <span class="progress-step-label">Race</span>
+    </div>
+    <div class="progress-step active">
+        <span>3</span>
+        <span class="progress-step-label">Background</span>
+    </div>
+    <div class="progress-step">
+        <span>4</span>
+        <span class="progress-step-label">Class</span>
+    </div>
+    <div class="progress-step">
+        <span>5</span>
+        <span class="progress-step-label">Stats</span>
+    </div>
+    <div class="progress-step">
+        <span>6</span>
+        <span class="progress-step-label">Finish</span>
+    </div>
+</div>
+
+<h2>Choose Your Background</h2>
+
+<div class="class-options">
+    <!-- Noble -->
+    <div class="class-option">
+        <div class="artwork-container">[Noble Art]</div>
+        <<button "Noble">>
+            <<set $tempBackground to "Noble">>
+            <<set $tempBackgroundDesc to "Born into power, wealth, and influence. Your privileged upbringing granted you the finest education and enhancements, but the world beyond your gilded cage demands more than just a noble name.">>
+            <<replace "#selected-background">>
+                Selected background: Noble<br>
+                <<print $tempBackgroundDesc>>
+            <</replace>>
+        <</button>>
+    </div>
+
+    <!-- Scholar -->
+    <div class="class-option">
+        <div class="artwork-container">[Scholar Art]</div>
+        <<button "Scholar">>
+            <<set $tempBackground to "Scholar">>
+            <<set $tempBackgroundDesc to "Knowledge seeker of both scientific and arcane mysteries. Your pursuit of forbidden knowledge makes you valuable to some, dangerous to others.">>
+            <<replace "#selected-background">>
+                Selected background: Scholar<br>
+                <<print $tempBackgroundDesc>>
+            <</replace>>
+        <</button>>
+    </div>
+
+    <!-- Thief -->
+    <div class="class-option">
+        <div class="artwork-container">[Thief Art]</div>
+        <<button "Thief">>
+            <<set $tempBackground to "Thief">>
+            <<set $tempBackgroundDesc to "Master of stealth and infiltration, whether a street thief, corporate spy, or digital infiltrator. You excel at finding and exploiting weaknesses in security systems.">>
+            <<replace "#selected-background">>
+                Selected background: Thief<br>
+                <<print $tempBackgroundDesc>>
+            <</replace>>
+        <</button>>
+    </div>
+
+    <!-- Mercenary -->
+    <div class="class-option">
+        <div class="artwork-container">[Mercenary Art]</div>
+        <<button "Mercenary">>
+            <<set $tempBackground to "Mercenary">>
+            <<set $tempBackgroundDesc to "Battle-hardened warrior for hire, combining traditional combat skills with modern enhancements. Your code is your own in a world of mercenaries.">>
+            <<replace "#selected-background">>
+                Selected background: Mercenary<br>
+                <<print $tempBackgroundDesc>>
+            <</replace>>
+        <</button>>
+    </div>
+
+    <!-- Outcast -->
+    <div class="class-option">
+        <div class="artwork-container">[Outcast Art]</div>
+        <<button "Outcast">>
+            <<set $tempBackground to "Outcast">>
+            <<set $tempBackgroundDesc to "Cast out from society, marked by technology or magic. Your exile has made you self‐reliant and uniquely perceptive of society's shadows.">>
+            <<replace "#selected-background">>
+                Selected background: Outcast<br>
+                <<print $tempBackgroundDesc>>
+            <</replace>>
+        <</button>>
+    </div>
+
+    <!-- Augmented -->
+    <div class="class-option">
+        <div class="artwork-container">[Augmented Art]</div>
+        <<button "Augmented">>
+            <<set $tempBackground to "Augmented">>
+            <<set $tempBackgroundDesc to "Enhanced beyond human limits through magic or technology. Your superhuman capabilities come with both power and price.">>
+            <<replace "#selected-background">>
+                Selected background: Augmented<br>
+                <<print $tempBackgroundDesc>>
+            <</replace>>
+        <</button>>
+    </div>
+
+    <!-- Street Rat -->
+    <div class="class-option">
+        <div class="artwork-container">[Street Rat Art]</div>
+        <<button "Street Rat">>
+            <<set $tempBackground to "Street Rat">>
+            <<set $tempBackgroundDesc to "Child of the urban underbelly, skilled in survival by any means necessary. The streets taught you everything you know about staying alive.">>
+            <<replace "#selected-background">>
+                Selected background: Street Rat<br>
+                <<print $tempBackgroundDesc>>
+            <</replace>>
+        <</button>>
+    </div>
+
+    <!-- Cultist -->
+    <div class="class-option">
+        <div class="artwork-container">[Cultist Art]</div>
+        <<button "Cultist">>
+            <<set $tempBackground to "Cultist">>
+            <<set $tempBackgroundDesc to "Devoted to powers beyond mortal comprehension, whether digital or mystical. Your unconventional beliefs grant both strange powers and dangerous knowledge.">>
+            <<replace "#selected-background">>
+                Selected background: Cultist<br>
+                <<print $tempBackgroundDesc>>
+            <</replace>>
+        <</button>>
+    </div>
+
+    <!-- Wanderer -->
+    <div class="class-option">
+        <div class="artwork-container">[Wanderer Art]</div>
+        <<button "Wanderer">>
+            <<set $tempBackground to "Wanderer">>
+            <<set $tempBackgroundDesc to "Eternal drifter between worlds both digital and mystical. Your past may be a mystery, but your experiences have made you uniquely adaptable.">>
+            <<replace "#selected-background">>
+                Selected background: Wanderer<br>
+                <<print $tempBackgroundDesc>>
+            <</replace>>
+        <</button>>
+    </div>
+
+    <!-- Corporate -->
+    <div class="class-option">
+        <div class="artwork-container">[Corporate Art]</div>
+        <<button "Corporate">>
+            <<set $tempBackground to "Corporate">>
+            <<set $tempBackgroundDesc to "Former insider of the ruling elite, whether corporate or magical. Your intimate knowledge of power structures makes you both valuable and dangerous.">>
+            <<replace "#selected-background">>
+                Selected background: Corporate<br>
+                <<print $tempBackgroundDesc>>
+            <</replace>>
+        <</button>>
+    </div>
+</div>
+
+<div id="selected-background" class="selected-class-display">
+    <<if $tempBackground != "">>
+        <<print "Selected background: " + $tempBackground>>
+        <br>
+        <<print $tempBackgroundDesc>>
+    <</if>>
+</div>
+
+<div class="navigation-controls">
+    <<button "Continue to Class Selection">>
+        <<if $tempBackground.trim() !== "">>
+            <<set $background to $tempBackground>>
+            <<goto "Class Selection">>
+        <<else>>
+            <<replace "#error-msg">>Please select a background.<</replace>>
+        <</if>>
+    <</button>>
+</div>

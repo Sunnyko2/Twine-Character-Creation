@@ -1,0 +1,104 @@
+<<nobr>>
+<<if $statPoints > 0>>
+    <<goto "Primary Stat Selection">>
+<</if>>
+<</nobr>>
+
+<div class="creation-progress">
+    <div class="progress-step completed">
+        <span>1</span>
+        <span class="progress-step-label">Name</span>
+    </div>
+    <div class="progress-step completed">
+        <span>2</span>
+        <span class="progress-step-label">Race</span>
+    </div>
+    <div class="progress-step completed">
+        <span>3</span>
+        <span class="progress-step-label">Background</span>
+    </div>
+    <div class="progress-step completed">
+        <span>4</span>
+        <span class="progress-step-label">Class</span>
+    </div>
+    <div class="progress-step completed">
+        <span>5</span>
+        <span class="progress-step-label">Stats</span>
+    </div>
+    <div class="progress-step active">
+        <span>6</span>
+        <span class="progress-step-label">Finish</span>
+    </div>
+</div>
+
+<h2>Character Summary</h2>
+
+<div class="character-card">
+    <div class="character-header">
+        <div>
+            <h3 class="character-name"><<print $name>></h3>
+            <div class="character-subtitle"><<print $race>> <<print $background>> <<print $class>></div>
+        </div>
+    </div>
+    
+    <div class="character-section">
+        <div class="character-info-grid">
+            <div class="character-info-item">
+                <div class="character-info-label">Race</div>
+                <div class="character-info-value"><<print $race>></div>
+            </div>
+            <div class="character-info-item">
+                <div class="character-info-label">Background</div>
+                <div class="character-info-value"><<print $background>></div>
+            </div>
+            <div class="character-info-item">
+                <div class="character-info-label">Class</div>
+                <div class="character-info-value"><<print $class>></div>
+            </div>
+            <div class="character-info-item">
+                <div class="character-info-label">Pronouns</div>
+                <div class="character-info-value"><<print $pronouns>></div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="character-section">
+        <h4 class="character-section-title">Attributes</h4>
+        <div class="character-stats-summary">
+            <div class="stat-summary-item">
+                <div class="stat-summary-label">Strength</div>
+                <div class="stat-summary-value"><<print $stats.strength>></div>
+            </div>
+            <div class="stat-summary-item">
+                <div class="stat-summary-label">Dexterity</div>
+                <div class="stat-summary-value"><<print $stats.dexterity>></div>
+            </div>
+            <div class="stat-summary-item">
+                <div class="stat-summary-label">Intelligence</div>
+                <div class="stat-summary-value"><<print $stats.intelligence>></div>
+            </div>
+            <div class="stat-summary-item">
+                <div class="stat-summary-label">Charisma</div>
+                <div class="stat-summary-value"><<print $stats.charisma>></div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="character-section">
+        <h4 class="character-section-title">Background</h4>
+        <p><<print $backgroundDesc>></p>
+    </div>
+    
+    <div class="character-section">
+        <h4 class="character-section-title">Class</h4>
+        <p><<print $classDesc>></p>
+    </div>
+</div>
+
+<p>Is this the character you wish to create?</p>
+
+<div class="navigation-controls">
+    <<button "Confirm Character">>
+        <<goto "Creation Complete">>
+    <</button>>
+</div>

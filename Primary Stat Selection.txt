@@ -1,0 +1,63 @@
+<<nobr>>
+<<if !$class || $class.trim() === "">>
+    <<goto "Class Selection">>
+<</if>>
+
+<<if not def $statPoints>>
+    <<set $statPoints to 10>>
+<</if>>
+
+<<if not def $stats>>
+    <<set $stats to {
+        strength: 10,
+        dexterity: 10,
+        intelligence: 10,
+        charisma: 10
+    }>>
+<</if>>
+<</nobr>>
+
+<h2>Distribute Your Attributes</h2>
+
+<div class="stat-distribution">
+    <div class="points-remaining tooltip-trigger">
+        Points Remaining: <span id="points-remaining"><<print $statPoints>></span>
+        <div class="tooltip">
+            Spend these points to increase your attributes. Each attribute starts at 10 and can be raised to a maximum of 18.
+        </div>
+    </div>
+
+    <div class="stat-grid">
+        <<statBlock "strength">>
+        <<statBlock "dexterity">>
+        <<statBlock "intelligence">>
+        <<statBlock "charisma">>
+    </div>
+
+    <div class="stat-explanation">
+        <p>Your background as a <<print $background>> provides certain natural tendencies:</p>
+        <div class="background-bonus tooltip-trigger">
+            <<switch $background>>
+                <<case "Noble">>
+                    +2 Charisma
+                <<case "Scholar">>
+                    +2 Intelligence
+                <<case "Thief">>
+                    +2 Dexterity
+                <<default>>
+                    +2 to Primary Attribute
+            <</switch>>
+            <div class="tooltip">
+                This bonus is automatically applied to your base stats.
+            </div>
+        </div>
+    </div>
+
+    <<button "Continue">>
+        <<if $statPoints eq 0>>
+            <<goto "Character Summary">>
+        <<else>>
+            <<run UI.alert("You still have attribute points to spend!", {title: "Points Remaining"})>>
+        <</if>>
+    <</button>>
+</div>

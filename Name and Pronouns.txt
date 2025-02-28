@@ -1,0 +1,101 @@
+<h2>Choose Your Name and Pronouns</h2>
+
+<!-- Name Entry Section -->
+<div class="name-entry">
+    <p>What name will echo through the ages?</p>
+    <div id="name-box">
+        <<textbox "$tempName" $tempName>>
+    </div>
+    <div id="name-error" class="error"></div>
+    
+    <div class="name-suggestions">
+        <p>Need inspiration? Try these names based on your future path:</p>
+        <div class="suggestion-buttons">
+            <<button "Noble Name">>
+                <<set $tempName to setup.suggestName('noble')>>
+                <<replace "#name-box">><<textbox "$tempName" $tempName>><</replace>>
+            <</button>>
+            <<button "Scholar Name">>
+                <<set $tempName to setup.suggestName('scholar')>>
+                <<replace "#name-box">><<textbox "$tempName" $tempName>><</replace>>
+            <</button>>
+            <<button "Thief Name">>
+                <<set $tempName to setup.suggestName('thief')>>
+                <<replace "#name-box">><<textbox "$tempName" $tempName>><</replace>>
+            <</button>>
+            <<button "Mercenary Name">>
+                <<set $tempName to setup.suggestName('mercenary')>>
+                <<replace "#name-box">><<textbox "$tempName" $tempName>><</replace>>
+            <</button>>
+            <<button "Outcast Name">>
+                <<set $tempName to setup.suggestName('outcast')>>
+                <<replace "#name-box">><<textbox "$tempName" $tempName>><</replace>>
+            <</button>>
+        </div>
+        <div class="suggestion-buttons">
+            <<button "Augmented Name">>
+                <<set $tempName to setup.suggestName('augmented')>>
+                <<replace "#name-box">><<textbox "$tempName" $tempName>><</replace>>
+            <</button>>
+            <<button "Street Rat Name">>
+                <<set $tempName to setup.suggestName('streetrat')>>
+                <<replace "#name-box">><<textbox "$tempName" $tempName>><</replace>>
+            <</button>>
+            <<button "Cultist Name">>
+                <<set $tempName to setup.suggestName('cultist')>>
+                <<replace "#name-box">><<textbox "$tempName" $tempName>><</replace>>
+            <</button>>
+            <<button "Wanderer Name">>
+                <<set $tempName to setup.suggestName('wanderer')>>
+                <<replace "#name-box">><<textbox "$tempName" $tempName>><</replace>>
+            <</button>>
+            <<button "Corporate Name">>
+                <<set $tempName to setup.suggestName('corporate')>>
+                <<replace "#name-box">><<textbox "$tempName" $tempName>><</replace>>
+            <</button>>
+        </div>
+    </div>
+</div>
+
+<!-- Pronoun Selection Section -->
+<div class="pronoun-selection">
+    <p>Your identity is an essential part of your story. Choose your pronouns:</p>
+    <div class="pronoun-buttons">
+        <<link "He/Him">>
+            <<set $pronouns to "He/Him">>
+            <<replace "#selected-pronoun">>He/Him<</replace>>
+            <<replace "#pronoun-error">><</replace>>
+        <</link>>
+        <<link "She/Her">>
+            <<set $pronouns to "She/Her">>
+            <<replace "#selected-pronoun">>She/Her<</replace>>
+            <<replace "#pronoun-error">><</replace>>
+        <</link>>
+        <<link "They/Them">>
+            <<set $pronouns to "They/Them">>
+            <<replace "#selected-pronoun">>They/Them<</replace>>
+            <<replace "#pronoun-error">><</replace>>
+        <</link>>
+    </div>
+    <div id="selected-pronoun" class="selected-pronoun-display"><<if def $pronouns>><<print $pronouns>><</if>></div>
+    <div id="pronoun-error" class="error"></div>
+</div>
+
+<div class="navigation-controls">
+    <<button "Continue to Race Selection" class="next-button">>
+        <<if $tempName and $tempName.trim() !== "">>
+            <<set _nameError to setup.validateName($tempName)>>
+            <<if _nameError>>
+                <<replace "#name-error">><<print _nameError>><</replace>>
+            <<elseif !$pronouns>>
+                <<replace "#pronoun-error">>Please select your pronouns.<</replace>>
+            <<else>>
+                <<set $name to $tempName>>
+                <<set $validName to true>>
+                <<goto "Race Selection">>
+            <</if>>
+        <<else>>
+            <<replace "#name-error">>Please enter a name.<</replace>>
+        <</if>>
+    <</button>>
+</div>

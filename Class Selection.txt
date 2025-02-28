@@ -1,0 +1,183 @@
+<<if !$background>>
+    <<goto "Background Selection">>
+<</if>>
+
+<div class="creation-progress">
+    <div class="progress-step completed">
+        <span>1</span>
+        <span class="progress-step-label">Name</span>
+    </div>
+    <div class="progress-step completed">
+        <span>2</span>
+        <span class="progress-step-label">Race</span>
+    </div>
+    <div class="progress-step completed">
+        <span>3</span>
+        <span class="progress-step-label">Background</span>
+    </div>
+    <div class="progress-step active">
+        <span>4</span>
+        <span class="progress-step-label">Class</span>
+    </div>
+    <div class="progress-step">
+        <span>5</span>
+        <span class="progress-step-label">Stats</span>
+    </div>
+    <div class="progress-step">
+        <span>6</span>
+        <span class="progress-step-label">Finish</span>
+    </div>
+</div>
+
+<h2>Choose Your Class</h2>
+
+<div class="class-options">
+    <!-- Shadowblade -->
+    <div class="class-option">
+        <div class="pixel-art-container">[Shadowblade Art]</div>
+        <<button "Shadowblade">>
+            <<set $tempClass to "Shadowblade">>
+            <<set $tempClassDesc to "A master of both steel and stealth, wielding enchanted daggers and cybernetic reflexes. Strikes from the shadows, whether in neon‐lit back alleys or ancient ruins.">>
+            <<replace "#selected-class">>
+                Selected class: Shadowblade<br>
+                <<print $tempClassDesc>>
+            <</replace>>
+        <</button>>
+    </div>
+    
+    <!-- Technomancer -->
+    <div class="class-option">
+        <div class="pixel-art-container">[Technomancer Art]</div>
+        <<button "Technomancer">>
+            <<set $tempClass to "Technomancer">>
+            <<set $tempClassDesc to "A spellcaster who merges arcane magic with bleeding‐edge technology. Hacks minds as easily as machines, shaping data and energy into weapons.">>
+            <<replace "#selected-class">>
+                Selected class: Technomancer<br>
+                <<print $tempClassDesc>>
+            <</replace>>
+        <</button>>
+    </div>
+    
+    <!-- Gunslinger -->
+    <div class="class-option">
+        <div class="pixel-art-container">[Gunslinger Art]</div>
+        <<button "Gunslinger">>
+            <<set $tempClass to "Gunslinger">>
+            <<set $tempClassDesc to "A high‐tech marksman, wielding enchanted revolvers or precision railguns. Shoots first, asks questions later—if ever.">>
+            <<replace "#selected-class">>
+                Selected class: Gunslinger<br>
+                <<print $tempClassDesc>>
+            <</replace>>
+        <</button>>
+    </div>
+    
+    <!-- Biohacker -->
+    <div class="class-option">
+        <div class="pixel-art-container">[Biohacker Art]</div>
+        <<button "Biohacker">>
+            <<set $tempClass to "Biohacker">>
+            <<set $tempClassDesc to "A rogue scientist who experiments on themselves, blending alchemy and biotech. Enhances their own abilities while crafting deadly serums and mutagenic plagues.">>
+            <<replace "#selected-class">>
+                Selected class: Biohacker<br>
+                <<print $tempClassDesc>>
+            <</replace>>
+        <</button>>
+    </div>
+    
+    <!-- Street Monk -->
+    <div class="class-option">
+        <div class="pixel-art-container">[Street Monk Art]</div>
+        <<button "Street Monk">>
+            <<set $tempClass to "Street Monk">>
+            <<set $tempClassDesc to "A martial artist trained in both ancient combat techniques and cybernetically enhanced strikes. Fights with their body, mind, and a code of honour—or a thirst for revenge.">>
+            <<replace "#selected-class">>
+                Selected class: Street Monk<br>
+                <<print $tempClassDesc>>
+            <</replace>>
+        <</button>>
+    </div>
+    
+    <!-- Witchhunter -->
+    <div class="class-option">
+        <div class="pixel-art-container">[Witchhunter Art]</div>
+        <<button "Witchhunter">>
+            <<set $tempClass to "Witchhunter">>
+            <<set $tempClassDesc to "A relentless bounty hunter, skilled in tracking both supernatural beings and rogue AIs. Wields enchanted bullets and sensor implants to hunt their quarry.">>
+            <<replace "#selected-class">>
+                Selected class: Witchhunter<br>
+                <<print $tempClassDesc>>
+            <</replace>>
+        <</button>>
+    </div>
+    
+    <!-- Cyber Knight -->
+    <div class="class-option">
+        <div class="pixel-art-container">[Cyber Knight Art]</div>
+        <<button "Cyber Knight">>
+            <<set $tempClass to "Cyber Knight">>
+            <<set $tempClassDesc to "A heavily‐armoured warrior, clad in techno‐magical plating. Defends the weak, enforces the law—or bends it to their own code.">>
+            <<replace "#selected-class">>
+                Selected class: Cyber Knight<br>
+                <<print $tempClassDesc>>
+            <</replace>>
+        <</button>>
+    </div>
+    
+    <!-- Psion -->
+    <div class="class-option">
+        <div class="pixel-art-container">[Psion Art]</div>
+        <<button "Psion">>
+            <<set $tempClass to "Psion">>
+            <<set $tempClassDesc to "A telepathic warrior, wielding their mind as a weapon. Reads thoughts, controls emotions, and shatters reality with sheer willpower.">>
+            <<replace "#selected-class">>
+                Selected class: Psion<br>
+                <<print $tempClassDesc>>
+            <</replace>>
+        <</button>>
+    </div>
+    
+    <!-- Riftwalker -->
+    <div class="class-option">
+        <div class="pixel-art-container">[Riftwalker Art]</div>
+        <<button "Riftwalker">>
+            <<set $tempClass to "Riftwalker">>
+            <<set $tempClassDesc to "A nomadic traveller who bends space and time, slipping between dimensions. Wields a mix of ancient relics and high‐tech gear scavenged from parallel worlds.">>
+            <<replace "#selected-class">>
+                Selected class: Riftwalker<br>
+                <<print $tempClassDesc>>
+            <</replace>>
+        <</button>>
+    </div>
+    
+    <!-- Saboteur -->
+    <div class="class-option">
+        <div class="pixel-art-container">[Saboteur Art]</div>
+        <<button "Saboteur">>
+            <<set $tempClass to "Saboteur">>
+            <<set $tempClassDesc to "An expert in infiltration and destruction, combining demolition magic with cybernetic sabotage. Masters of guerrilla warfare, they turn the enemy's own technology against them.">>
+            <<replace "#selected-class">>
+                Selected class: Saboteur<br>
+                <<print $tempClassDesc>>
+            <</replace>>
+        <</button>>
+    </div>
+</div>
+
+<div id="selected-class" class="selected-class-display">
+    <<if $tempClass != "">>
+        <<print "Selected class: " + $tempClass>>
+        <br>
+        <<print $tempClassDesc>>
+    <</if>>
+</div>
+
+<div class="navigation-controls">
+    <<button "Continue to Primary Stat Selection">>
+        <<if $tempClass.trim() !== "">>
+            <<set $class to $tempClass>>
+            <<goto "Primary Stat Selection">>
+        <<else>>
+            <<replace "#error-msg">>Please select a class.<</replace>>
+        <</if>>
+    <</button>>
+</div>

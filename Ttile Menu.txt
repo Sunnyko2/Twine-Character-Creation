@@ -1,0 +1,16 @@
+<div class="title-screen-container">
+    <div class="title-logo">
+        <div class="logo-glow-effect"></div>
+        <h1 class="game-title">CYBERMANCY</h1>
+        <h2 class="game-subtitle">WRAITHS OF THE NEON VEIL</h2>
+    </div>
+    
+    <div class="title-menu">
+        <<button "NEW GAME" "Character Creation Start" class="title-button glow-button">><</button>>
+        <<button "SETTINGS" class="title-button glow-button">><<run UI.settings()>><</button>>
+    </div>
+    
+    <div class="version-info">
+        <span>Alpha Build</span>
+    </div>
+</div>
