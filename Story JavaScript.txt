@@ -61,6 +61,80 @@ setup.validateProgressionState = function() {
     }
 };
 
+// Validate passage navigation based on creation progression
+setup.validatePassageNavigation = function(currentPassage) {
+    try {
+        // Creation progression order
+        const progressionOrder = [
+            "Name and Pronouns",
+            "Race Selection",
+            "Background Selection",
+            "Class Selection",
+            "Primary Stat Selection",
+            "Character Summary",
+            "Creation Complete"
+        ];
+        
+        // Determine current step index
+        const currentIndex = progressionOrder.indexOf(currentPassage);
+        
+        // If we're not in the progression, don't validate
+        if (currentIndex === -1) return true;
+        
+        // Check if requirements for current step are met
+        switch(currentPassage) {
+            case "Race Selection":
+                if (!State.variables.name || !State.variables.pronouns) {
+                    Engine.play("Name and Pronouns");
+                    return false;
+                }
+                break;
+                
+            case "Background Selection":
+                if (!State.variables.race) {
+                    Engine.play("Race Selection");
+                    return false;
+                }
+                break;
+                
+            case "Class Selection":
+                if (!State.variables.background) {
+                    Engine.play("Background Selection");
+                    return false;
+                }
+                break;
+                
+            case "Primary Stat Selection":
+                if (!State.variables.class) {
+                    Engine.play("Class Selection");
+                    return false;
+                }
+                break;
+                
+            case "Character Summary":
+                if (State.variables.statPoints !== 0) {
+                    Engine.play("Primary Stat Selection");
+                    return false;
+                }
+                break;
+                
+            case "Creation Complete":
+                if (!State.variables.name || !State.variables.race || 
+                    !State.variables.background || !State.variables.class || 
+                    State.variables.statPoints !== 0) {
+                    Engine.play("Character Summary");
+                    return false;
+                }
+                break;
+        }
+        
+        return true;
+    } catch (e) {
+        setup.handleError("validatePassageNavigation", e);
+        return true; // Default to allowing navigation on error
+    }
+};
+
 // Name validation with special character restrictions
 setup.validateName = function(name) {
     try {
@@ -257,6 +331,211 @@ setup.selectBackground = function(background) {
     }
 };
 
+// Initialize event handlers when a new passage renders
+setup.initNavigation = function() {
+    try {
+        // Set up data-passage links
+        $('[data-passage]').off('click.navigation').on('click.navigation', function(event) {
+            event.preventDefault();
+            const passage = $(this).data('passage');
+            if (passage) {
+                // Check if this is a next button that should be disabled
+                if ($(this).hasClass('next-button') && $(this).parent().find('.disabled-next').length > 0) {
+                    return false;
+                }
+                Engine.play(passage);
+            }
+            return false;
+        });
+        return true;
+    } catch (e) {
+        return setup.handleError("initNavigation", e);
+    }
+};
+
+// Initialize smooth scrolling for details panels
+setup.initSmoothScrolling = function() {
+    try {
+        $('button[data-select]').off('click.smooth-scroll').on('click.smooth-scroll', function() {
+            const detailsPanel = document.querySelector('.details-panel');
+            if (detailsPanel) {
+                setTimeout(function() {
+                    detailsPanel.scrollIntoView({ 
+                        behavior: 'smooth', 
+                        block: 'nearest' 
+                    });
+                }, 100);
+            }
+        });
+        return true;
+    } catch (e) {
+        return setup.handleError("initSmoothScrolling", e);
+    }
+};
+
+// Card selection highlight
+setup.initCardSelection = function() {
+    try {
+        $('.selection-card button').off('click.card-selection').on('click.card-selection', function() {
+            $('.selection-card').removeClass('selected');
+            $(this).closest('.selection-card').addClass('selected');
+        });
+        return true;
+    } catch (e) {
+        return setup.handleError("initCardSelection", e);
+    }
+};
+
+// Race selection navigation
+setup.selectRace = function(race) {
+    try {
+        State.variables.race = race;
+        Engine.play("Background Selection");
+        return true;
+    } catch (e) {
+        return setup.handleError("selectRace", e);
+    }
+};
+
+// Validate name and continue to next step
+setup.validateNameAndContinue = function() {
+    try {
+        const nameError = setup.validateName(State.variables.tempName);
+        
+        if (nameError) {
+            if ($('#name-error').length) {
+                $('#name-error').text(nameError).show();
+            }
+            return false;
+        }
+        
+        // Check pronouns
+        if (!State.variables.pronouns) {
+            if ($('#pronoun-error').length) {
+                $('#pronoun-error').text("Please select your pronouns.").show();
+            }
+            return false;
+        }
+        
+        // Set the validated name and move forward
+        State.variables.name = State.variables.tempName;
+        State.variables.validName = true;
+        Engine.play("Race Selection");
+        return true;
+    } catch (e) {
+        return setup.handleError("validateNameAndContinue", e);
+    }
+};
+
+// Add screen reader ARIA attributes
+setup.addScreenReaderDescriptions = function() {
+    try {
+        // Add role for screen readers
+        $('.background-option, .class-option')
+            .attr('role', 'group')
+            .attr('aria-label', function() {
+                return $(this).find('button').first().text().trim() + ' option';
+            });
+        
+        // Add descriptions to background options
+        $('.background-option button, .class-option button').each(function() {
+            const optionName = $(this).text().trim();
+            const description = $(this).closest('.background-option, .class-option')
+                                      .find('p').first().text().trim() || '';
+            
+            $(this).attr('aria-label', `Select ${optionName}: ${description.substring(0, 100)}...`);
+        });
+        
+        // Add descriptions to name suggestion buttons
+        $('.suggestion-buttons button').attr('aria-label', function() {
+            return `Suggest ${$(this).text()} for your character`;
+        });
+        
+        // Add labels to race selection buttons
+        $('[data-race]').each(function() {
+            const raceName = $(this).attr('data-race');
+            const description = $(this).closest('li').find('p').first().text().trim() || '';
+            $(this).attr('aria-label', `Select ${raceName}: ${description.substring(0, 100)}...`);
+        });
+        
+        // Add ARIA live regions
+        $('.selected-class-display, #selected-race, #selected-background, #selected-class')
+            .attr('aria-live', 'polite');
+            
+        return true;
+    } catch (e) {
+        return setup.handleError("addScreenReaderDescriptions", e);
+    }
+};
+
+// Function to make elements properly focusable
+setup.makeElementsFocusable = function() {
+    try {
+        // Ensure buttons are focusable with keyboard
+        $('button:not([tabindex]), a:not([tabindex]), [role="button"]:not([tabindex])')
+            .attr('tabindex', '0');
+        
+        // Make sure disabled buttons are appropriately marked
+        $('.disabled-button, button[disabled]')
+            .attr('aria-disabled', 'true')
+            .attr('tabindex', '-1');
+            
+        // Ensure proper focus indication for interactive elements
+        $('button, a, [role="button"]').each(function() {
+            if (!$(this).css('outline') || $(this).css('outline') === 'none') {
+                $(this).css('outline-offset', '2px');
+            }
+        });
+        
+        return true;
+    } catch (e) {
+        return setup.handleError("makeElementsFocusable", e);
+    }
+};
+
+// Adjust layout for screen size
+setup.adjustLayoutForScreenSize = function() {
+    try {
+        const isMobile = window.innerWidth < 768;
+        
+        if (isMobile) {
+            $('.selection-grid, .class-options').addClass('mobile-layout');
+            $('body').addClass('mobile-view');
+        } else {
+            $('.selection-grid, .class-options').removeClass('mobile-layout');
+            $('body').removeClass('mobile-view');
+        }
+        
+        // Adjust font size based on screen width
+        if (window.innerWidth < 480) {
+            $('html').addClass('small-screen');
+        } else {
+            $('html').removeClass('small-screen');
+        }
+        
+        return true;
+    } catch (e) {
+        return setup.handleError("adjustLayoutForScreenSize", e);
+    }
+};
+
+// Combine all UI initialisation
+setup.initializeUI = function() {
+    try {
+        setup.initTooltips();
+        setup.updateStatDisplay();
+        setup.initNavigation();
+        setup.initSmoothScrolling();
+        setup.initCardSelection();
+        setup.addScreenReaderDescriptions();
+        setup.makeElementsFocusable();
+        
+        return true;
+    } catch (e) {
+        return setup.handleError("initializeUI", e);
+    }
+};
+
 // Initialize a new character
 setup.initializeCharacter = function() {
     try {
@@ -275,6 +554,97 @@ setup.initializeCharacter = function() {
     }
 };
 
+// Confirm restart to prevent accidental data loss
+setup.confirmRestart = function() {
+    try {
+        if (State.variables.name || State.variables.race || State.variables.background || State.variables.class) {
+            return confirm("This will reset your character creation progress. Are you sure?");
+        }
+        return true;
+    } catch (e) {
+        setup.handleError("confirmRestart", e);
+        return true; // Default to allowing restart if there's an error
+    }
+};
+
+// Character save and load functions using SugarCube's storage API
+setup.saveCharacter = function() {
+    try {
+        // Create a character object from the current state variables
+        const character = {
+            name: State.variables.name || "",
+            race: State.variables.race || "",
+            background: State.variables.background || "",
+            backgroundDesc: State.variables.backgroundDesc || "",
+            class: State.variables.class || "",
+            classDesc: State.variables.classDesc || "",
+            pronouns: State.variables.pronouns || "",
+            stats: jQuery.extend(true, {}, State.variables.stats || {
+                strength: 10,
+                dexterity: 10,
+                intelligence: 10,
+                charisma: 10
+            })
+        };
+        
+        // Use SugarCube's state metadata for character storage
+        State.metadata.set('savedCharacter', character);
+        return JSON.stringify(character);
+    } catch (e) {
+        setup.handleError("saveCharacter", e);
+        UI.alert("Failed to save character: " + e.message);
+        return null;
+    }
+};
+
+setup.loadCharacter = function() {
+    try {
+        if (!State.metadata.has('savedCharacter')) {
+            UI.alert("No saved character found.");
+            return null;
+        }
+        
+        const character = State.metadata.get('savedCharacter');
+        
+        if (!character || typeof character !== 'object') {
+            UI.alert("Invalid saved character data.");
+            return null;
+        }
+        
+        // Restore character data to state
+        State.variables.name = character.name || "";
+        State.variables.race = character.race || "";
+        State.variables.background = character.background || "";
+        State.variables.backgroundDesc = character.backgroundDesc || "";
+        State.variables.class = character.class || "";
+        State.variables.classDesc = character.classDesc || "";
+        State.variables.pronouns = character.pronouns || "";
+        
+        // Make a deep copy of stats to avoid reference issues
+        State.variables.stats = jQuery.extend(true, {}, character.stats || {
+            strength: 10,
+            dexterity: 10,
+            intelligence: 10,
+            charisma: 10
+        });
+        
+        // Calculate stat points remaining (assuming default points were 10)
+        let spentPoints = 0;
+        for (const stat in State.variables.stats) {
+            if (State.variables.stats.hasOwnProperty(stat)) {
+                spentPoints += Math.max(0, State.variables.stats[stat] - 10);
+            }
+        }
+        State.variables.statPoints = Math.max(0, 10 - spentPoints);
+        
+        return character;
+    } catch (e) {
+        setup.handleError("loadCharacter", e);
+        UI.alert("Failed to load character: " + e.message);
+        return null;
+    }
+};
+
 // Custom macro for character stat blocks in the point-buy system
 Macro.add('statBlock', {
     handler: function() {
@@ -285,7 +655,7 @@ Macro.add('statBlock', {
             
             const stat = this.args[0];
             
-            // Ensure stats are initialized
+            // Ensure stats are initialised
             if (!State.variables.stats) {
                 State.variables.stats = jQuery.extend(true, {}, setup.characterDefaults.stats);
             }
@@ -371,30 +741,330 @@ Macro.add('statBlock', {
     }
 });
 
-// Event handlers - Story startup
+// -------------------------------
+// Event Handlers and Enhancements
+// -------------------------------
+
+// Story startup event handlers
 $(document).one(':storyready', function() {
     // Initialize character state
     setup.validateProgressionState();
+    
+    // Initialise accessibility settings and apply them
+    setup.initializeAccessibility();
+    setup.applyAccessibilitySettings();
+    
+    // Setup keyboard navigation (if not already defined)
+    if (!setup.setupKeyboardNavigation) {
+        setup.setupKeyboardNavigation = function() {
+            // Keyboard navigation is handled by the global keydown event below.
+        };
+    }
+    setup.setupKeyboardNavigation();
+    
+    // Adjust layout for current screen size
+    setup.adjustLayoutForScreenSize();
 });
 
-// Create settings for accessibility options
+// Passage transition event handlers
+$(document).on(':passagestart', function(ev) {
+    // Validate navigation
+    setup.validatePassageNavigation(ev.passage.title);
+});
+
+$(document).on(':passagerender', function(ev) {
+    // Initialise UI
+    setup.initializeUI();
+});
+
+// -------------------------------
+// Enhanced Accessibility Settings
+// -------------------------------
+
+// 1. Improved screen reader accessibility for interactive elements
+$(document).on(':passagerender', function() {
+    // Improve ARIA labels for all interactive elements
+    $('.class-option button, .selection-card button').each(function() {
+        const optionName = $(this).text().trim();
+        const description = $(this).closest('.class-option, .selection-card')
+                                  .find('p').first().text().trim() || '';
+        
+        $(this).attr('aria-label', `Select ${optionName}: ${description.substring(0, 100)}...`);
+    });
+    
+    // Make interactive elements properly focusable
+    $('button:not([tabindex]), a:not([tabindex]), [role="button"]:not([tabindex])')
+        .attr('tabindex', '0');
+    
+    // Ensure disabled buttons are properly marked for screen readers
+    $('.disabled-button, button[disabled]')
+        .attr('aria-disabled', 'true')
+        .attr('tabindex', '-1');
+    
+    // Add ARIA live regions to dynamic content areas
+    $('.selected-class-display, #selected-race, #selected-background, #selected-class')
+        .attr('aria-live', 'polite');
+    
+    // Make error messages accessible to screen readers
+    $('.error').attr('aria-live', 'assertive');
+    
+    // Add proper roles to selection grids
+    $('.class-options, .selection-grid').attr('role', 'group');
+    $('.class-option, .selection-card').attr('role', 'group');
+    
+    // Improve skip navigation
+    if ($('#skip-to-content').length === 0) {
+        $('body').prepend('<a id="skip-to-content" href="#passages">Skip to content</a>');
+    }
+});
+
+// 2. Enhanced keyboard navigation for grid layouts and Enter key support
+$(document).on('keydown', function(e) {
+    // Handle arrow key navigation in grid layouts
+    if (e.key === 'ArrowRight' || e.key === 'ArrowLeft' || 
+        e.key === 'ArrowUp' || e.key === 'ArrowDown') {
+        
+        if ($('.class-option button, .selection-card button').length > 0) {
+            const focusableElements = $('.class-option button, .selection-card button').toArray();
+            const currentElement = document.activeElement;
+            
+            if (!focusableElements.includes(currentElement)) {
+                // If no element is focused, focus the first one on any arrow key
+                focusableElements[0].focus();
+                e.preventDefault();
+                return;
+            }
+            
+            const currentIndex = focusableElements.indexOf(currentElement);
+            const columnsCount = Math.floor($('.class-options, .selection-grid').width() / 
+                                            $('.class-option, .selection-card').first().outerWidth(true)) || 3;
+            
+            let newIndex = currentIndex;
+            
+            if (e.key === 'ArrowRight') {
+                newIndex = Math.min(focusableElements.length - 1, currentIndex + 1);
+            } else if (e.key === 'ArrowLeft') {
+                newIndex = Math.max(0, currentIndex - 1);
+            } else if (e.key === 'ArrowDown') {
+                newIndex = Math.min(focusableElements.length - 1, currentIndex + columnsCount);
+            } else if (e.key === 'ArrowUp') {
+                newIndex = Math.max(0, currentIndex - columnsCount);
+            }
+            
+            if (newIndex !== currentIndex) {
+                focusableElements[newIndex].focus();
+                e.preventDefault();
+            }
+        }
+    }
+    
+    // Add Enter key support for elements with role="button"
+    if (e.key === 'Enter') {
+        const activeElement = document.activeElement;
+        if (activeElement && $(activeElement).attr('role') === 'button') {
+            $(activeElement).trigger('click');
+            e.preventDefault();
+        }
+    }
+});
+
+// 3. Add accessibility menu button to the page if it doesn't exist
+$(document).on(':passagerender', function() {
+    if ($('#accessibility-menu-button').length === 0) {
+        $('#passages').prepend(
+            $('<button id="accessibility-menu-button" aria-label="Accessibility Settings">')
+                .text('Accessibility')
+                .on('click', function() {
+                    UI.settings();
+                })
+        );
+    }
+});
+
+// 4. Improved tooltips for screen readers
+$(document).on(':passagerender', function() {
+    $('.tooltip-trigger').each(function() {
+        // Extract tooltip text
+        const tooltipText = $(this).find('.tooltip').text();
+        if (tooltipText && !$(this).attr('aria-label')) {
+            $(this).attr('aria-label', tooltipText);
+        }
+    });
+});
+
+// 5. Ensure screen reader announcements for error messages
+$(document).on(':passagerender', function() {
+    // Monitor changes to error messages
+    const observer = new MutationObserver(function(mutations) {
+        mutations.forEach(function(mutation) {
+            if (mutation.type === 'childList' && mutation.addedNodes.length > 0) {
+                const errorText = $(mutation.target).text().trim();
+                if (errorText) {
+                    // Announce the error
+                    $(mutation.target).attr('role', 'alert');
+                }
+            }
+        });
+    });
+    
+    // Observe error message containers
+    $('.error').each(function() {
+        observer.observe(this, { childList: true, subtree: true });
+    });
+});
+
+// 6. Improve screen reader experience for stat points
+$(document).on(':passagerender', function() {
+    // Ensure stat distribution is accessible
+    if ($('.stat-distribution').length > 0) {
+        $('.stat-distribution').attr('aria-label', 'Stat distribution panel');
+        
+        // Improve stat block accessibility
+        $('.stat-block').each(function() {
+            const statName = $(this).find('label').text();
+            const statValue = $(this).find('[id$="-value"]').text();
+            
+            $(this).find('button[id^="increase-"]').attr('aria-label', `Increase ${statName} (currently ${statValue})`);
+            $(this).find('button[id^="decrease-"]').attr('aria-label', `Decrease ${statName} (currently ${statValue})`);
+        });
+        
+        // Make points remaining more accessible
+        $('#points-remaining').parent().attr('role', 'status')
+            .attr('aria-label', 'Points remaining: ' + $('#points-remaining').text());
+    }
+});
+
+// -------------------------------
+// Updated Accessibility Settings Options
+// -------------------------------
+
 Setting.addHeader("Accessibility", "Options to improve game accessibility");
 
 Setting.addList("fontSize", {
     label: "Text Size",
-    desc: "Change the size of text throughout the game",
+    desc: "Adjust the size of text throughout the game",
     list: ["small", "medium", "large", "extra-large"],
-    default: "medium"
+    default: "medium",
+    onInit: function() {
+        $('html').removeClass('text-small text-medium text-large text-extra-large')
+                .addClass('text-' + settings.fontSize);
+    },
+    onChange: function() {
+        $('html').removeClass('text-small text-medium text-large text-extra-large')
+                .addClass('text-' + settings.fontSize);
+    }
 });
 
 Setting.addToggle("highContrast", {
     label: "High Contrast Mode",
     desc: "Increases contrast for better readability",
-    default: false
+    default: false,
+    onInit: function() {
+        if (settings.highContrast) {
+            $('html').addClass('high-contrast');
+        } else {
+            $('html').removeClass('high-contrast');
+        }
+    },
+    onChange: function() {
+        if (settings.highContrast) {
+            $('html').addClass('high-contrast');
+        } else {
+            $('html').removeClass('high-contrast');
+        }
+    }
 });
 
 Setting.addToggle("reduceAnimations", {
     label: "Reduce Animations",
-    desc: "Minimizes or removes animations that may cause discomfort",
-    default: false
+    desc: "Minimises or removes animations that may cause discomfort",
+    default: false,
+    onInit: function() {
+        if (settings.reduceAnimations) {
+            $('html').addClass('reduce-animations');
+        } else {
+            $('html').removeClass('reduce-animations');
+        }
+    },
+    onChange: function() {
+        if (settings.reduceAnimations) {
+            $('html').addClass('reduce-animations');
+        } else {
+            $('html').removeClass('reduce-animations');
+        }
+    }
 });
+
+Setting.addToggle("focusHighlight", {
+    label: "Enhanced Focus Indicators",
+    desc: "Makes it easier to see which element is currently focused",
+    default: false,
+    onInit: function() {
+        if (settings.focusHighlight) {
+            $('html').addClass('enhanced-focus');
+        } else {
+            $('html').removeClass('enhanced-focus');
+        }
+    },
+    onChange: function() {
+        if (settings.focusHighlight) {
+            $('html').addClass('enhanced-focus');
+        } else {
+            $('html').removeClass('enhanced-focus');
+        }
+    }
+});
+
+// Accessibility functions (already defined below in the file)
+setup.initializeAccessibility = function() {
+    try {
+        if (!State.variables.accessibility) {
+            State.variables.accessibility = {
+                fontSize: settings.fontSize || 'medium',
+                highContrast: settings.highContrast || false,
+                reduceAnimations: settings.reduceAnimations || false,
+                focusHighlight: settings.focusHighlight || false
+            };
+        }
+        return true;
+    } catch (e) {
+        return setup.handleError("initializeAccessibility", e);
+    }
+};
+
+setup.applyAccessibilitySettings = function() {
+    try {
+        const html = document.documentElement;
+        
+        // Apply font size
+        if (settings.fontSize) {
+            html.classList.remove('text-small', 'text-medium', 'text-large', 'text-extra-large');
+            html.classList.add('text-' + settings.fontSize);
+        }
+        
+        // Apply contrast
+        if (settings.highContrast) {
+            html.classList.add('high-contrast');
+        } else {
+            html.classList.remove('high-contrast');
+        }
+        
+        // Apply animation reduction
+        if (settings.reduceAnimations) {
+            html.classList.add('reduce-motion');
+        } else {
+            html.classList.remove('reduce-motion');
+        }
+        
+        // Apply focus highlighting
+        if (settings.focusHighlight) {
+            html.classList.add('enhanced-focus');
+        } else {
+            html.classList.remove('enhanced-focus');
+        }
+        
+        return true;
+    } catch (e) {
+        return setup.handleError("applyAccessibilitySettings", e);
+    }
+};
