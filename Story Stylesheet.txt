@@ -1,1139 +1,386 @@
-/* Base Variables */
-:root {
-    /* Color scheme */
-    --neon-primary: #00FFBB;
-    --neon-primary-dim: rgba(0, 255, 187, 0.1);
-    --neon-primary-mid: rgba(0, 255, 187, 0.3);
-    --neon-secondary: #FF6B6B;
-    --neon-secondary-dim: rgba(255, 107, 107, 0.1);
-    --dark-primary: #0A0B12;
-    --dark-secondary: #1A1B23;
-    --medieval-gold: #FFD700;
+// ----- ARIA and Screen Reader Improvements -----
+
+// 1. Enhanced screen reader support for character creation steps
+$(document).on(":passagerender", function() {
+    // Add proper ARIA roles and labels to all interactive elements
+    $('.creation-progress').attr('role', 'progressbar')
+        .attr('aria-valuemin', '1')
+        .attr('aria-valuemax', '6');
     
-    /* Spacing */
-    --spacing-xs: 0.5em;
-    --spacing-sm: 1em;
-    --spacing-md: 1.5em;
-    --spacing-lg: 2em;
-    --spacing-xl: 3em;
+    // Set current progress step based on active class
+    const activeStepIndex = $('.progress-step.active').index() + 1;
+    const totalSteps = $('.progress-step').length;
     
-    /* Font sizes */
-    --font-size-xs: 0.8em;
-    --font-size-sm: 0.9em;
-    --font-size-md: 1em;
-    --font-size-lg: 1.2em;
-    --font-size-xl: 1.5em;
-    --font-size-xxl: 2em;
-    --font-size-title: 4em;
+    $('.creation-progress').attr('aria-valuenow', activeStepIndex)
+        .attr('aria-valuetext', 'Step ' + activeStepIndex + ' of ' + totalSteps);
     
-    /* Border radius */
-    --border-radius: 4px;
+    // Add descriptive ARIA labels to all selection options
+    $('.class-option button, .pixel-art-container').each(function() {
+        const optionText = $(this).text().trim();
+        const descriptionEl = $(this).closest('.class-option').find('p');
+        const description = descriptionEl.length ? descriptionEl.text().trim() : '';
+        
+        $(this).attr('aria-label', optionText + (description ? ': ' + description : ''));
+    });
     
-    /* Transitions */
-    --transition-speed: 0.3s;
+    // Make sure all form controls have proper labels
+    $('input:not([aria-label]), textarea:not([aria-label])').each(function() {
+        const id = $(this).attr('id');
+        const labelEl = $('label[for="' + id + '"]');
+        
+        if (!labelEl.length) {
+            const placeholderText = $(this).attr('placeholder') || '';
+            $(this).attr('aria-label', placeholderText || 'Input field');
+        }
+    });
     
-    /* Shadows */
-    --glow-small: 0 0 10px var(--neon-primary);
-    --glow-medium: 0 0 15px var(--neon-primary);
-    --glow-large: 0 0 20px var(--neon-primary);
-    
-    /* Z-index layers - adjusted to work with SugarCube's UI */
-    --z-background: 0;
-    --z-content: 10;
-    --z-overlay: 100;
-    --z-modal: 900; /* Lower than SugarCube's dialog z-index */
-}
-
-/* Base styles */
-html {
-    margin: 0;
-    padding: 0;
-    font-family: 'Arial', sans-serif;
-    background-color: var(--dark-primary);
-    color: #E0E0E0;
-    height: 100%;
-    min-height: 100vh;
-    line-height: 1.6;
-    font-size: 16px;
-}
-
-body {
-    margin: 0;
-    padding: 0;
-    font-size: inherit;
-}
-
-/* Font size classes for accessibility */
-html.text-small { font-size: 0.85em; }
-html.text-medium { font-size: 1em; }
-html.text-large { font-size: 1.2em; }
-html.text-extra-large { font-size: 1.4em; }
-
-/* High contrast mode with improved contrast ratios */
-html.high-contrast {
-    --neon-primary: #00FF00;
-    --neon-primary-dim: rgba(0, 255, 0, 0.1);
-    --neon-primary-mid: rgba(0, 255, 0, 0.3);
-    --neon-secondary: #FF0000;
-    --neon-secondary-dim: rgba(255, 0, 0, 0.1);
-    --dark-primary: #000000;
-    --dark-secondary: #0A0A0A;
-    color: #FFFFFF;
-}
-
-html.high-contrast button, 
-html.high-contrast a, 
-html.high-contrast .title-button, 
-html.high-contrast .back-button, 
-html.high-contrast .next-button {
-    color: #FFFFFF;
-    border-color: #FFFFFF;
-    background: #333333;
-    text-shadow: none;
-}
-
-html.high-contrast .selected-class-display,
-html.high-contrast .class-option,
-html.high-contrast .name-entry,
-html.high-contrast .pronoun-selection,
-html.high-contrast .stat-distribution,
-html.high-contrast .details-panel {
-    background: #333333;
-    border-color: #FFFFFF;
-}
-
-html.high-contrast h1, 
-html.high-contrast h2, 
-html.high-contrast h3 {
-    color: #FFFFFF;
-    text-shadow: none;
-}
-
-/* Enhanced focus indicators */
-html.enhanced-focus button:focus,
-html.enhanced-focus a:focus,
-html.enhanced-focus input:focus,
-html.enhanced-focus select:focus,
-html.enhanced-focus [role="button"]:focus {
-    outline: 3px solid var(--neon-secondary) !important;
-    outline-offset: 3px !important;
-    box-shadow: 0 0 0 3px rgba(255, 107, 107, 0.4) !important;
-}
-
-/* Reduce animations */
-html.reduce-animations * {
-    animation-duration: 0.001s !important;
-    transition-duration: 0.001s !important;
-}
-
-/* SugarCube Story UI */
-#story {
-    max-width: 100%;
-    margin: 0;
-    padding: 0;
-    background: var(--dark-primary);
-    min-height: 100vh;
-}
-
-#passages {
-    max-width: 1200px;
-    width: 90%;
-    margin: 0 auto;
-    padding: var(--spacing-lg) 0;
-}
-
-/* Remove the rectangle background */
-.passage {
-    background: transparent !important;
-    border: none !important;
-    box-shadow: none !important;
-    padding: 0 !important;
-    max-width: 100%;
-}
-
-/* Enhanced headers */
-h1, h2 {
-    text-align: center;
-    color: var(--medieval-gold);
-    font-family: Arial, sans-serif;
-    margin-bottom: var(--spacing-lg);
-    position: relative;
-    text-shadow: 0 0 10px var(--neon-secondary),
-                 0 0 20px rgba(255, 215, 0, 0.3);
-}
-
-h1::after, h2::after {
-    content: '';
-    position: absolute;
-    bottom: -0.5em;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 150px;
-    height: 2px;
-    background: linear-gradient(90deg, 
-        transparent,
-        var(--neon-primary),
-        var(--medieval-gold),
-        var(--neon-primary),
-        transparent
-    );
-}
-
-h3 {
-    color: var(--neon-primary);
-    margin: var(--spacing-md) 0 var(--spacing-sm);
-}
-
-/* Title Page Styles */
-.title-screen-container {
-    background-image: url('https://github.com/Sunnyko2/twine-images-final/blob/main/Background%20Imahe%20Final.png?raw=true');
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    min-height: 100vh;
-    width: 100%;
-    margin: 0;
-    padding: var(--spacing-lg);
-    max-width: none;
-    overflow: hidden;
-    text-align: center;
-}
-
-/* Add a semi-transparent overlay to ensure text is readable */
-.title-screen-container::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: linear-gradient(135deg, 
-        rgba(10, 11, 18, 0.5) 0%, 
-        rgba(26, 27, 35, 0.5) 50%, 
-        rgba(10, 11, 18, 0.5) 100%);
-    background-size: 400% 400%;
-    animation: gradientShift 15s ease infinite;
-    z-index: 0;
-}
-
-/* Ensure content appears above the overlay */
-.title-logo, .title-menu, .version-info {
-    position: relative;
-    z-index: 1;
-}
-
-/* Make title text more visible */
-.game-title {
-    text-shadow: 0 0 20px rgba(0, 0, 0, 0.8), 0 0 30px rgba(0, 255, 187, 0.6);
-    font-size: var(--font-size-title);
-    margin-bottom: 0.2em;
-    color: var(--neon-primary);
-    letter-spacing: 0.15em;
-}
-
-.game-subtitle {
-    text-shadow: 0 0 15px rgba(0, 0, 0, 0.8), 0 0 20px rgba(255, 107, 107, 0.6);
-    font-size: var(--font-size-xl);
-    margin-bottom: var(--spacing-lg);
-    color: var(--neon-secondary);
-    letter-spacing: 0.1em;
-}
-
-.title-logo {
-    margin-bottom: var(--spacing-xl);
-}
-
-.title-menu {
-    display: flex;
-    flex-direction: column;
-    gap: var(--spacing-sm);
-    margin: var(--spacing-lg) 0;
-    width: 100%;
-    max-width: 300px;
-}
-
-.version-info {
-    margin-top: var(--spacing-xl);
-    opacity: 0.7;
-    font-size: var(--font-size-xs);
-}
-
-/* Touch-enhanced interactive elements */
-.title-button, .glow-button, button, a {
-    -webkit-tap-highlight-color: transparent;
-    touch-action: manipulation;
-    transition: transform var(--transition-speed) ease, 
-                background-color var(--transition-speed) ease,
-                box-shadow var(--transition-speed) ease;
-}
-
-.title-button, .glow-button {
-    width: 100%;
-    padding: var(--spacing-sm);
-    border: 2px solid var(--neon-primary);
-    background: var(--neon-primary-dim);
-    color: var(--neon-primary);
-    font-size: var(--font-size-lg);
-    letter-spacing: 2px;
-    cursor: pointer;
-    border-radius: var(--border-radius);
-    will-change: transform, background-color, box-shadow;
-}
-
-.title-button:hover, .glow-button:hover {
-    background: var(--neon-primary);
-    color: var(--dark-primary);
-    transform: scale(1.05);
-    box-shadow: var(--glow-medium);
-}
-
-/* Creation intro container */
-.creation-intro-container {
-    max-width: 800px;
-    margin: 0 auto;
-    padding: var(--spacing-lg);
-    text-align: center;
-}
-
-.intro-heading {
-    color: var(--medieval-gold);
-    font-size: var(--font-size-xxl);
-    margin-bottom: var(--spacing-sm);
-}
-
-.intro-text {
-    line-height: 1.6;
-    margin-bottom: var(--spacing-lg);
-}
-
-.intro-text p {
-    margin-bottom: var(--spacing-sm);
-}
-
-.intro-buttons {
-    display: flex;
-    justify-content: center;
-    gap: var(--spacing-md);
-    margin-top: var(--spacing-lg);
-}
-
-/* Progress tracker styling */
-.creation-progress {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: var(--spacing-xl);
-    position: relative;
-    padding: 0 var(--spacing-sm);
-}
-
-.creation-progress::before {
-    content: '';
-    position: absolute;
-    top: 15px;
-    left: 0;
-    right: 0;
-    height: 2px;
-    background: var(--neon-primary-mid);
-    z-index: var(--z-background);
-}
-
-.progress-step {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    position: relative;
-    z-index: var(--z-content);
-}
-
-.progress-step span:first-child {
-    width: 30px;
-    height: 30px;
-    border-radius: 50%;
-    background: var(--dark-primary);
-    border: 2px solid var(--neon-primary);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-bottom: 0.5em;
-}
-
-.progress-step.active span:first-child {
-    background: var(--neon-primary);
-    color: var(--dark-primary);
-    box-shadow: var(--glow-small);
-}
-
-.progress-step.completed span:first-child {
-    background: var(--neon-secondary);
-    color: var(--dark-primary);
-}
-
-.progress-step-label {
-    font-size: var(--font-size-xs);
-    text-align: center;
-    max-width: 80px;
-}
-
-/* Name and Pronoun Entry Styles */
-.name-entry {
-    text-align: center;
-    margin: var(--spacing-lg) 0;
-    background: rgba(10, 11, 18, 0.7);
-    padding: var(--spacing-lg);
-    border: 1px solid var(--neon-primary);
-    border-radius: var(--border-radius);
-}
-
-#name-box {
-    margin: var(--spacing-sm) 0 var(--spacing-lg);
-}
-
-input[type="text"] {
-    background: var(--neon-primary-dim);
-    border: 1px solid var(--neon-primary);
-    color: #E0E0E0;
-    padding: 0.8em 1em;
-    border-radius: var(--border-radius);
-    width: 100%;
-    max-width: 300px;
-    margin: 0 auto;
-    display: block;
-    font-size: var(--font-size-md);
-}
-
-input[type="text"]:focus {
-    outline: 2px solid var(--neon-primary);
-    box-shadow: var(--glow-small);
-}
-
-.name-suggestions {
-    margin-top: var(--spacing-lg);
-}
-
-.suggestion-buttons {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.5em;
-    justify-content: center;
-    margin-top: var(--spacing-sm);
-}
-
-.suggestion-buttons button {
-    font-size: var(--font-size-xs);
-    padding: 0.5em 1em;
-}
-
-.pronoun-selection {
-    text-align: center;
-    margin: var(--spacing-lg) 0;
-    background: rgba(10, 11, 18, 0.7);
-    padding: var(--spacing-lg);
-    border: 1px solid var(--neon-primary);
-    border-radius: var(--border-radius);
-}
-
-.pronoun-buttons {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.8em;
-    justify-content: center;
-    margin: var(--spacing-sm) 0;
-}
-
-.pronoun-selection a {
-    display: inline-block;
-    padding: 0.7em 2em;
-    background: var(--neon-primary-dim);
-    color: var(--neon-primary);
-    border: 1px solid var(--neon-primary);
-    border-radius: var(--border-radius);
-    margin: 0 0.5em;
-    text-decoration: none;
-}
-
-.pronoun-selection a:hover {
-    background: var(--neon-primary);
-    color: var(--dark-primary);
-    transform: scale(1.05);
-}
-
-.selected-pronoun-display {
-    min-height: 1.5em;
-    margin-top: var(--spacing-sm);
-    font-weight: bold;
-    color: var(--neon-primary);
-}
-
-/* Error messages */
-.error {
-    color: var(--neon-secondary);
-    margin-top: 0.5em;
-    font-weight: bold;
-    min-height: 1.5em;
-}
-
-/* Class/Background/Race selection styling */
-.class-options {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-    gap: var(--spacing-md);
-    margin: var(--spacing-lg) 0;
-}
-
-.class-option {
-    background: rgba(10, 11, 18, 0.7);
-    border: 1px solid var(--neon-primary);
-    border-radius: var(--border-radius);
-    padding: var(--spacing-md);
-    transition: all var(--transition-speed) ease;
-}
-
-.class-option:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 0 15px rgba(0, 255, 187, 0.2);
-}
-
-.class-option button {
-    width: 100%;
-    text-align: center;
-}
-
-.artwork-container, .pixel-art-container {
-    height: 100px;
-    background: rgba(0, 0, 0, 0.3);
-    margin-bottom: var(--spacing-sm);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border: 1px solid rgba(0, 255, 187, 0.3);
-    border-radius: var(--border-radius);
-}
-
-.selected-class-display {
-    margin: var(--spacing-lg) 0;
-    padding: var(--spacing-md);
-    background: rgba(10, 11, 18, 0.7);
-    border: 1px solid var(--neon-primary);
-    border-radius: var(--border-radius);
-    animation: fadeIn var(--transition-speed) ease-in-out;
-    min-height: 4em;
-}
-
-.class-bonuses {
-    margin-top: var(--spacing-sm);
-    padding: var(--spacing-sm);
-    background: var(--neon-primary-dim);
-    border-radius: var(--border-radius);
-}
-
-/* Button styling for standard buttons */
-button {
-    display: inline-block;
-    padding: 0.7em 1.5em;
-    background: var(--neon-primary-dim);
-    color: var(--neon-primary);
-    border: 1px solid var(--neon-primary);
-    border-radius: var(--border-radius);
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    cursor: pointer;
-    font-size: var(--font-size-sm);
-}
-
-button:hover {
-    background: var(--neon-primary);
-    color: var(--dark-primary);
-    transform: scale(1.05);
-}
-
-button:focus {
-    outline: 2px solid var(--neon-secondary);
-    outline-offset: 2px;
-}
-
-button[data-select] {
-    width: 100%;
-    margin-top: auto;
-}
-
-/* Disabled button style */
-button[disabled], 
-.disabled-button,
-button[aria-disabled="true"] {
-    opacity: 0.6;
-    cursor: not-allowed;
-    border-color: #666;
-    color: #888;
-    background: rgba(255, 255, 255, 0.05);
-}
-
-button[disabled]:hover, 
-.disabled-button:hover,
-button[aria-disabled="true"]:hover {
-    background: rgba(255, 255, 255, 0.05);
-    color: #888;
-    transform: none;
-    box-shadow: none;
-}
-
-/* Details panel */
-.details-panel {
-    background: rgba(10, 11, 18, 0.7);
-    border: 1px solid var(--neon-primary);
-    border-radius: var(--border-radius);
-    padding: var(--spacing-lg);
-    animation: fadeIn var(--transition-speed) ease-in-out;
-    margin-top: var(--spacing-md);
-}
-
-.details-panel h3 {
-    color: var(--neon-primary);
-    margin-bottom: var(--spacing-sm);
-    font-size: var(--font-size-lg);
-}
-
-/* Perk and skill lists */
-.perk-list {
-    margin: var(--spacing-md) 0;
-    padding: var(--spacing-sm);
-    background: rgba(0, 255, 187, 0.05);
-    border-radius: var(--border-radius);
-}
-
-.perk-item {
-    margin-bottom: 0.5em;
-    position: relative;
-    padding-left: 1.5em;
-}
-
-.perk-item::before {
-    content: '•';
-    position: absolute;
-    left: 0.5em;
-    color: var(--neon-primary);
-}
-
-/* Navigation controls */
-.navigation-controls {
-    display: flex;
-    justify-content: space-between;
-    margin-top: var(--spacing-lg);
-}
-
-.back-button {
-    display: inline-block;
-    padding: 0.7em 1.5em;
-    background: var(--neon-secondary-dim);
-    color: var(--neon-secondary);
-    border: 1px solid var(--neon-secondary);
-    border-radius: var(--border-radius);
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    cursor: pointer;
-    text-decoration: none;
-}
-
-.back-button:hover {
-    background: var(--neon-secondary);
-    color: var(--dark-primary);
-    transform: scale(1.05);
-}
-
-.back-button:focus {
-    outline: 2px solid var(--neon-primary);
-    outline-offset: 2px;
-}
-
-button.next-button {
-    display: inline-block;
-    background: var(--neon-primary-dim);
-    color: var(--neon-primary);
-    border: 1px solid var(--neon-primary);
-    border-radius: var(--border-radius);
-    padding: 0.7em 1.5em;
-    text-decoration: none;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-}
-
-button.next-button:hover {
-    background: var(--neon-primary);
-    color: var(--dark-primary);
-    transform: scale(1.05);
-}
-
-.disabled-next {
-    display: inline-block;
-    padding: 0.7em 1.5em;
-    background: rgba(255, 255, 255, 0.1);
-    color: #666;
-    border: 1px solid #444;
-    border-radius: var(--border-radius);
-    cursor: not-allowed;
-}
-
-/* Stat distribution */
-.stat-distribution {
-    max-width: 800px;
-    margin: var(--spacing-lg) auto;
-    padding: var(--spacing-lg);
-    background: rgba(10, 11, 18, 0.7);
-    border: 1px solid var(--neon-primary);
-    border-radius: var(--border-radius);
-}
-
-.points-remaining {
-    text-align: center;
-    font-size: var(--font-size-lg);
-    color: var(--neon-primary);
-    padding: var(--spacing-sm);
-    background: var(--neon-primary-dim);
-    border-radius: var(--border-radius);
-    margin-bottom: var(--spacing-sm);
-}
-
-.stat-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: var(--spacing-sm);
-    margin: var(--spacing-md) 0;
-}
-
-.stat-block {
-    background: var(--dark-secondary);
-    border: 1px solid var(--neon-primary);
-    padding: var(--spacing-sm);
-    border-radius: var(--border-radius);
-    display: grid;
-    grid-template-columns: auto 1fr auto auto auto;
-    gap: 0.5em;
-    align-items: center;
-}
-
-.stat-block label {
-    font-weight: bold;
-}
-
-.stat-block button {
-    width: 32px;
-    height: 32px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: var(--font-size-lg);
-    padding: 0;
-    background: var(--neon-primary-dim);
-    margin: 0 2px;
-}
-
-/* Stat explanation */
-.stat-explanation {
-    margin-top: var(--spacing-md);
-    font-size: var(--font-size-sm);
-    border-top: 1px solid var(--neon-primary-mid);
-    padding-top: var(--spacing-sm);
-}
-
-.background-bonus {
-    display: inline-block;
-    padding: 0.3em 0.8em;
-    background: var(--neon-primary-dim);
-    border-radius: var(--border-radius);
-    margin: 0.5em 0;
-}
-
-/* Character card for summary */
-.character-card {
-    background: rgba(10, 11, 18, 0.8);
-    border: 1px solid var(--neon-primary);
-    border-radius: var(--border-radius);
-    margin: var(--spacing-lg) 0;
-    overflow: hidden;
-}
-
-.character-header {
-    background: var(--neon-primary-dim);
-    padding: var(--spacing-md);
-    border-bottom: 1px solid var(--neon-primary);
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.character-name {
-    color: var(--medieval-gold);
-    margin: 0;
-    font-size: var(--font-size-xl);
-}
-
-.character-subtitle {
-    color: var(--neon-secondary);
-    font-style: italic;
-}
-
-.character-section {
-    padding: var(--spacing-md);
-    border-bottom: 1px solid var(--neon-primary-mid);
-}
-
-.character-section-title {
-    color: var(--neon-primary);
-    margin-bottom: var(--spacing-sm);
-}
-
-.character-section p {
-    margin: 0.5em 0;
-    line-height: 1.5;
-}
-
-.character-info-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-    gap: var(--spacing-sm);
-}
-
-.character-info-item {
-    padding: 0.8em;
-    background: var(--neon-primary-dim);
-    border-radius: var(--border-radius);
-}
-
-.character-info-label {
-    font-size: var(--font-size-xs);
-    color: var(--neon-secondary);
-    margin-bottom: 0.3em;
-}
-
-.character-stats-summary {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-    gap: 0.8em;
-}
-
-.stat-summary-item {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: var(--spacing-sm);
-    background: var(--neon-primary-dim);
-    border-radius: var(--border-radius);
-}
-
-.stat-summary-label {
-    font-size: var(--font-size-xs);
-    margin-bottom: 0.3em;
-    color: var(--neon-secondary);
-}
-
-.stat-summary-value {
-    font-size: var(--font-size-lg);
-    font-weight: bold;
-    color: var(--neon-primary);
-}
-
-/* Completion page */
-.completion-message {
-    text-align: center;
-    background: rgba(10, 11, 18, 0.7);
-    border: 1px solid var(--neon-primary);
-    border-radius: var(--border-radius);
-    padding: var(--spacing-xl);
-    margin: var(--spacing-lg) 0;
-}
-
-.character-save {
-    margin: var(--spacing-lg) 0;
-}
-
-#save-message {
-    color: var(--neon-primary);
-    height: 2em;
-    margin: var(--spacing-sm) 0;
-}
-
-.completion-controls {
-    display: flex;
-    justify-content: center;
-    gap: var(--spacing-sm);
-    margin-top: var(--spacing-lg);
-}
-
-/* Accessibility menu button */
-#accessibility-menu-button {
-    position: fixed;
-    top: 1em;
-    right: 1em;
-    z-index: var(--z-overlay);
-    padding: 0.5em 1em;
-    font-size: var(--font-size-xs);
-    background: rgba(255, 255, 255, 0.1);
-    border: 1px solid var(--neon-primary);
-    color: var(--neon-primary);
-    border-radius: var(--border-radius);
-}
-
-/* Tooltip styling */
-.tooltip-trigger {
-    position: relative;
-}
-
-.tooltip {
-    display: none;
-    position: absolute;
-    bottom: 100%;
-    left: 50%;
-    transform: translateX(-50%);
-    background: var(--dark-secondary);
-    color: #fff;
-    padding: 0.5em;
-    border-radius: 4px;
-    font-size: 0.85em;
-    width: max-content;
-    max-width: 200px;
-    z-index: 100;
-    border: 1px solid var(--neon-primary);
-    box-shadow: 0 0 5px rgba(0, 255, 187, 0.5);
-}
-
-/* Animations */
-@keyframes fadeIn {
-    from {
-        opacity: 0;
-        transform: translateY(10px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-@keyframes glow {
-    0% {
-        box-shadow: 0 0 5px var(--neon-primary);
-    }
-    50% {
-        box-shadow: 0 0 15px var(--neon-primary), 0 0 30px var(--neon-primary-dim);
-    }
-    100% {
-        box-shadow: 0 0 5px var(--neon-primary);
-    }
-}
-
-@keyframes gradientShift {
-    0% {
-        background-position: 0% 50%;
-    }
-    50% {
-        background-position: 100% 50%;
-    }
-    100% {
-        background-position: 0% 50%;
-    }
-}
-
-/* Media queries for responsive design */
-@media (max-width: 768px) {
-    .class-options, .selection-grid {
-        grid-template-columns: 1fr;
+    // Add live regions for dynamic content
+    $('.selected-class-display, #selected-background, #selected-race, #name-error, #pronoun-error')
+        .attr('aria-live', 'polite');
+});
+
+// 2. Enhanced keyboard navigation
+$(document).on("keydown", function(e) {
+    // Add arrow key navigation for selection grids
+    if ($('.class-option').length && (e.key === 'ArrowRight' || e.key === 'ArrowLeft' || 
+                                     e.key === 'ArrowUp' || e.key === 'ArrowDown')) {
+        const focusableElements = $('.class-option button:visible').toArray();
+        const currentElement = document.activeElement;
+        const currentIndex = focusableElements.indexOf(currentElement);
+        
+        if (currentIndex !== -1) {
+            let newIndex = currentIndex;
+            const columns = Math.round(Math.sqrt(focusableElements.length));
+            
+            switch(e.key) {
+                case 'ArrowRight':
+                    newIndex = Math.min(focusableElements.length - 1, currentIndex + 1);
+                    break;
+                case 'ArrowLeft':
+                    newIndex = Math.max(0, currentIndex - 1);
+                    break;
+                case 'ArrowDown':
+                    newIndex = Math.min(focusableElements.length - 1, currentIndex + columns);
+                    break;
+                case 'ArrowUp':
+                    newIndex = Math.max(0, currentIndex - columns);
+                    break;
+            }
+            
+            if (newIndex !== currentIndex && focusableElements[newIndex]) {
+                focusableElements[newIndex].focus();
+                e.preventDefault();
+            }
+        }
     }
     
-    body {
-        font-size: 0.9em;
+    // Add 'Enter' key support for elements with role="button"
+    if (e.key === 'Enter') {
+        const el = document.activeElement;
+        if (el && el.getAttribute('role') === 'button' && !el.disabled) {
+            el.click();
+            e.preventDefault();
+        }
+    }
+});
+
+// 3. Skip navigation for keyboard users
+$('#passages').prepend(`
+    <a href="#main-content" id="skip-to-content" class="visually-hidden">Skip to main content</a>
+`);
+
+// Add main content identifier
+$(document).on(":passagerender", function() {
+    // Add id to main content area if not already present
+    if ($('#main-content').length === 0) {
+        $('.passage > :first-child').attr('id', 'main-content');
+    }
+});
+
+// 4. Improve focus visibility
+$('head').append(`
+    <style>
+        /* Enhanced focus styles */
+        *:focus {
+            outline: 3px solid #FF6B6B !important;
+            outline-offset: 3px !important;
+        }
+        
+        /* Skip link styling */
+        .visually-hidden {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border: 0;
+        }
+        
+        .visually-hidden:focus {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: auto;
+            height: auto;
+            padding: 10px;
+            margin: 10px;
+            background: #1A1B23;
+            color: #00FFBB;
+            z-index: 9999;
+            overflow: visible;
+            clip: auto;
+            white-space: normal;
+            text-decoration: none;
+            border: 2px solid #00FFBB;
+        }
+    </style>
+`);
+
+// 5. Accessibility Settings API extensions
+Setting.addHeader("Accessibility Settings", "Options to make the game more accessible");
+
+// Font size setting
+Setting.addList("fontSize", {
+    label: "Text Size",
+    desc: "Change the size of text throughout the game",
+    list: ["small", "normal", "large", "x-large"],
+    default: "normal",
+    onInit: function() {
+        applyFontSize(settings.fontSize);
+    },
+    onChange: function() {
+        applyFontSize(settings.fontSize);
+    }
+});
+
+// Apply font size changes
+function applyFontSize(size) {
+    $('html').removeClass('text-small text-normal text-large text-x-large')
+             .addClass('text-' + size);
+}
+
+// High contrast mode
+Setting.addToggle("highContrast", {
+    label: "High Contrast Mode",
+    desc: "Increases contrast for better visibility",
+    default: false,
+    onInit: function() {
+        applyContrastMode(settings.highContrast);
+    },
+    onChange: function() {
+        applyContrastMode(settings.highContrast);
+    }
+});
+
+// Apply contrast mode changes
+function applyContrastMode(enabled) {
+    if (enabled) {
+        $('html').addClass('high-contrast');
+    } else {
+        $('html').removeClass('high-contrast');
+    }
+}
+
+// Motion reduction
+Setting.addToggle("reduceMotion", {
+    label: "Reduce Motion",
+    desc: "Decreases or removes animations",
+    default: false,
+    onInit: function() {
+        applyReduceMotion(settings.reduceMotion);
+    },
+    onChange: function() {
+        applyReduceMotion(settings.reduceMotion);
+    }
+});
+
+// Apply motion reduction
+function applyReduceMotion(enabled) {
+    if (enabled) {
+        $('html').addClass('reduce-motion');
+    } else {
+        $('html').removeClass('reduce-motion');
+    }
+}
+
+// 6. Add CSS for accessibility modes
+$('head').append(`
+    <style>
+        /* Font size classes */
+        html.text-small {
+            font-size: 14px;
+        }
+        
+        html.text-normal {
+            font-size: 16px;
+        }
+        
+        html.text-large {
+            font-size: 18px;
+        }
+        
+        html.text-x-large {
+            font-size: 20px;
+        }
+        
+        /* High contrast mode */
+        html.high-contrast {
+            --neon-primary: #00FF00;
+            --neon-secondary: #FF0000;
+            --dark-primary: #000000;
+            --dark-secondary: #0A0A0A;
+            color: #FFFFFF;
+        }
+        
+        html.high-contrast button,
+        html.high-contrast a {
+            color: #FFFFFF;
+            border-color: #FFFFFF;
+            background-color: #000000;
+        }
+        
+        html.high-contrast .class-option,
+        html.high-contrast .stat-block,
+        html.high-contrast .name-entry,
+        html.high-contrast .pronoun-selection {
+            background-color: #000000;
+            border-color: #FFFFFF;
+        }
+        
+        /* Reduce motion */
+        html.reduce-motion * {
+            animation-duration: 0.001s !important;
+            transition-duration: 0.001s !important;
+        }
+    </style>
+`);
+
+// 7. Add tooltip accessibility enhancements
+$(document).on(":passagerender", function() {
+    $('.tooltip-trigger').each(function() {
+        const tooltip = $(this).find('.tooltip');
+        if (tooltip.length) {
+            // If tooltip exists, set up ARIA attributes
+            const id = 'tooltip-' + Math.random().toString(36).substring(2, 10);
+            tooltip.attr('id', id)
+                   .attr('role', 'tooltip')
+                   .attr('aria-hidden', 'true');
+            
+            $(this).attr('aria-describedby', id);
+            
+            // Toggle tooltip visibility
+            $(this).on('mouseenter focus', function() {
+                tooltip.attr('aria-hidden', 'false');
+            }).on('mouseleave blur', function() {
+                tooltip.attr('aria-hidden', 'true');
+            });
+        }
+    });
+});
+
+// 8. Add ARIA to stat blocks
+$(document).on(":passagerender", function() {
+    $('.stat-block').each(function() {
+        const valueEl = $(this).find('[id$="-value"]');
+        const modifierEl = $(this).find('[id$="-modifier"]');
+        
+        if (valueEl.length) {
+            const statName = valueEl.attr('id').replace('-value', '');
+            $(this).attr('role', 'group')
+                   .attr('aria-label', statName + ' attribute');
+            
+            // Announce changes to the value
+            const increaseBtn = $(this).find('[id^="increase-"]');
+            const decreaseBtn = $(this).find('[id^="decrease-"]');
+            
+            increaseBtn.attr('aria-label', 'Increase ' + statName);
+            decreaseBtn.attr('aria-label', 'Decrease ' + statName);
+            
+            valueEl.attr('aria-live', 'polite')
+                   .attr('role', 'status');
+            
+            if (modifierEl.length) {
+                modifierEl.attr('aria-live', 'polite')
+                          .attr('role', 'status');
+            }
+        }
+    });
+});
+
+// 9. Add accessibility button to UI
+$(document).one(":passagestart", function() {
+    if ($('#accessibility-button').length === 0) {
+        $('#ui-bar').find('#ui-bar-toggle').after(`
+            <button id="accessibility-button" aria-label="Accessibility Settings" title="Accessibility Settings">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/>
+                    <path d="M12 5V19" stroke="currentColor" stroke-width="2"/>
+                    <path d="M5 12H19" stroke="currentColor" stroke-width="2"/>
+                </svg>
+            </button>
+        `);
+        
+        $('#accessibility-button').on('click', function() {
+            UI.settings();
+        });
+    }
+});
+
+// Add CSS for accessibility button
+$('head').append(`
+    <style>
+        #accessibility-button {
+            padding: 0.5em;
+            background: transparent;
+            border: none;
+            color: inherit;
+            cursor: pointer;
+        }
+        
+        #accessibility-button:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+    </style>
+`);
+
+// 10. Add descriptive help text for form inputs
+$(document).on(":passagerender", function() {
+    // Add descriptive text for name field
+    if ($('#name-box').length && !$('#name-help-text').length) {
+        $('#name-box').after(`
+            <div id="name-help-text" class="help-text">
+                Enter a name for your character. Name should be 2-20 characters long and may include letters, spaces, hyphens, and apostrophes.
+            </div>
+        `);
+        
+        // Connect help text to input with aria-describedby
+        $('#name-box input').attr('aria-describedby', 'name-help-text');
     }
     
-    .creation-progress {
-        flex-wrap: wrap;
-        justify-content: center;
-        gap: 1em;
+    // Add help text for stat distribution
+    if ($('.stat-distribution').length && !$('#stat-help-text').length) {
+        $('.points-remaining').after(`
+            <div id="stat-help-text" class="help-text">
+                Distribute your attribute points. Higher values give better chances at related skills. You must spend all points before continuing.
+            </div>
+        `);
     }
-    
-    .creation-progress::before {
-        display: none
-}
-    
-    .progress-step {
-        margin: 0 0.5em 1em;
-    }
-    
-    .pronoun-buttons, .suggestion-buttons {
-        flex-direction: column;
-        align-items: center;
-    }
-    
-    .navigation-controls {
-        flex-direction: column;
-        gap: 1em;
-    }
-    
-    .stat-block {
-        grid-template-columns: 1fr auto auto auto;
-    }
-    
-    .stat-block label {
-        grid-column: 1 / -1;
-        text-align: center;
-    }
-    
-    .character-header {
-        flex-direction: column;
-    }
-}
+});
 
-@media (max-width: 480px) {
-    html {
-        font-size: 14px;
-    }
-    
-    .game-title {
-        font-size: 2.5em;
-    }
-    
-    .game-subtitle {
-        font-size: 1.2em;
-    }
-    
-    #passages {
-        width: 95%;
-        padding: var(--spacing-sm) 0;
-    }
-    
-    .stat-grid {
-        grid-template-columns: 1fr;
-    }
-    
-    .character-info-grid, .character-stats-summary {
-        grid-template-columns: 1fr;
-    }
-}
-
-/* SugarCube-specific compatibility styles */
-#ui-dialog {
-    background-color: var(--dark-secondary);
-    border: 2px solid var(--neon-primary);
-    border-radius: var(--border-radius);
-    box-shadow: 0 0 20px rgba(0, 255, 187, 0.3);
-}
-
-#ui-dialog-titlebar {
-    background-color: var(--dark-primary);
-    border-bottom: 1px solid var(--neon-primary);
-}
-
-#ui-dialog-title {
-    color: var(--neon-primary);
-}
-
-#ui-dialog-close {
-    color: var(--neon-secondary);
-}
-
-#ui-dialog-body {
-    background-color: var(--dark-secondary);
-    color: #E0E0E0;
-}
-
-.ui-close {
-    background-color: var(--neon-primary-dim);
-    color: var(--neon-primary);
-    border: 1px solid var(--neon-primary);
-}
-
-.ui-close:hover {
-    background-color: var(--neon-primary);
-    color: var(--dark-primary);
-}
-
-/* Accessibility and mobile friendly focus/active states */
-@media (hover: hover) {
-    a:hover, button:hover, .title-button:hover, .glow-button:hover {
-        transform: scale(1.05);
-    }
-}
-
-@media (hover: none) {
-    a:active, button:active, .title-button:active, .glow-button:active {
-        background-color: var(--neon-primary);
-        color: var(--dark-primary);
-    }
-}
-
-/* Ensure readable focus states even without hover */
-a:focus, button:focus, input:focus, select:focus {
-    outline: 2px solid var(--neon-secondary);
-    outline-offset: 2px;
-}
-
-/* Additional custom macro support */
-.macro-statBlock {
-    margin-bottom: var(--spacing-sm);
-}
-
-/* Remove scrollbars for aesthetic reasons but keep functionality */
-::-webkit-scrollbar {
-    width: 8px;
-    height: 8px;
-}
-
-::-webkit-scrollbar-track {
-    background: var(--dark-primary);
-}
-
-::-webkit-scrollbar-thumb {
-    background: var(--neon-primary-dim);
-    border-radius: 4px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-    background: var(--neon-primary);
-}
-
-/* Ensure overflows are handled gracefully */
-body, html, #story, #passages, .passage {
-    overflow-x: hidden;
-}
-
-/* Support for the custom statBlock macro */
-.stat-block #strength-value,
-.stat-block #dexterity-value,
-.stat-block #intelligence-value,
-.stat-block #charisma-value {
-    font-weight: bold;
-    text-align: center;
-}
-
-.stat-block #strength-modifier,
-.stat-block #dexterity-modifier,
-.stat-block #intelligence-modifier,
-.stat-block #charisma-modifier {
-    font-size: 0.9em;
-    color: var(--neon-secondary);
-    width: 2em;
-    text-align: center;
-}
-
-/* ARIA live regions for dynamic content */
-[aria-live] {
-    border: 0;
-    clip: rect(0 0 0 0);
-    height: 1px;
-    margin: -1px;
-    overflow: hidden;
-    padding: 0;
-    position: absolute;
-    width: 1px;
-}
-
-[aria-live="polite"] {
-    display: block;
-    height: auto;
-    margin: 0;
-    overflow: visible;
-    position: static;
-    width: auto;
-}
+// Add CSS for help text
+$('head').append(`
+    <style>
+        .help-text {
+            font-size: 0.9em;
+            margin: 0.5em 0 1em;
+            color: #ccc;
+        }
+        
+        html.high-contrast .help-text {
+            color: #FFFFFF;
+        }
+    </style>
+`);
