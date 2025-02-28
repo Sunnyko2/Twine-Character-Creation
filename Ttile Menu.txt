@@ -1,3 +1,5 @@
+<!-- Title Menu -->
+:: Title Menu
 <div class="title-screen-container">
     <div class="title-logo">
         <div class="logo-glow-effect"></div>
@@ -6,8 +8,8 @@
     </div>
     
     <div class="title-menu">
-        <<button "NEW GAME" "Character Creation Start" class="title-button glow-button">><</button>>
-        <<button "SETTINGS" class="title-button glow-button">><<run UI.settings()>><</button>>
+        <<button "NEW GAME" "Character Creation Start">><<run setup.initializeCharacter()>><</button>>
+        <<button "SETTINGS">><<run UI.settings()>><</button>>
     </div>
     
     <div class="version-info">
