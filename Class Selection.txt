@@ -1,6 +1,10 @@
+<!-- Class Selection -->
+:: Class Selection
+<<nobr>>
 <<if !$background>>
     <<goto "Background Selection">>
 <</if>>
+<</nobr>>
 
 <div class="creation-progress">
     <div class="progress-step completed">
@@ -165,7 +169,7 @@
 
 <div id="selected-class" class="selected-class-display">
     <<if $tempClass != "">>
-        <<print "Selected class: " + $tempClass>>
+        Selected class: <<print $tempClass>>
         <br>
         <<print $tempClassDesc>>
     <</if>>
@@ -173,11 +177,13 @@
 
 <div class="navigation-controls">
     <<button "Continue to Primary Stat Selection">>
-        <<if $tempClass.trim() !== "">>
+        <<if $tempClass and $tempClass.trim() !== "">>
             <<set $class to $tempClass>>
+            <<set $classDesc to $tempClassDesc>>
+            <<run setup.selectBackground($background)>>
             <<goto "Primary Stat Selection">>
         <<else>>
-            <<replace "#error-msg">>Please select a class.<</replace>>
+            <<replace "#selected-class">>Please select a class.<</replace>>
         <</if>>
     <</button>>
 </div>
