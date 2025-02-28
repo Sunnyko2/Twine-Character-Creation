@@ -1,0 +1,7 @@
+<!-- A placeholder passage for starting the game -->
+
+<h1>Your Adventure Begins...</h1>
+
+<p>The neon lights of Neo-Arcadia cast harsh shadows across your face as you step into the rain-slicked streets. Your journey as a <<print $class>> begins now.</p>
+
+<p>This is where the main game would begin.</p>
