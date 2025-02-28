@@ -1,5 +1,3 @@
-// JavaScript passage cleanup
-// This should go in your Story JavaScript area
 
 // Initialize story variables
 Config.history.maxStates = 10;
