@@ -1,3 +1,11 @@
+<!-- Race Selection -->
+:: Race Selection
+<<nobr>>
+<<if !$name || !$pronouns>>
+    <<goto "Name and Pronouns">>
+<</if>>
+<</nobr>>
+
 <div class="creation-progress">
     <div class="progress-step completed">
         <span>1</span>
@@ -140,7 +148,7 @@
             <<set $tempRaceDesc to "Born from the remnants of divine ancestry, Celestials radiate an aura of mystery and power. Their bioluminescent markings shift with their emotions, and some develop abilities that blur the line between magic and advanced science. Whether healers, prophets, or warriors, they move through the world with an almost otherworldly presence.">>
             <<replace "#selected-race">>
                 Selected race: Celestials<br>
-                <<print $tempRaceDesc>>
+<<print $tempRaceDesc>> 
             <</replace>>
         <</button>>
     </div>
@@ -174,7 +182,7 @@
 
 <div id="selected-race" class="selected-class-display">
     <<if $tempRace != "">>
-        <<print "Selected race: " + $tempRace>>
+        Selected race: <<print $tempRace>>
         <br>
         <<print $tempRaceDesc>>
     <</if>>
@@ -182,11 +190,12 @@
 
 <div class="navigation-controls">
     <<button "Continue to Background Selection">>
-        <<if $tempRace.trim() !== "">>
+        <<if $tempRace and $tempRace.trim() !== "">>
             <<set $race to $tempRace>>
+            <<set $raceDesc to $tempRaceDesc>>
             <<goto "Background Selection">>
         <<else>>
-            <<replace "#error-msg">>Please select a race.<</replace>>
+            <<replace "#selected-race">>Please select a race.<</replace>>
         <</if>>
     <</button>>
 </div>
