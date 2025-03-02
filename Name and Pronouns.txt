@@ -1,5 +1,4 @@
-<!-- Name and Pronouns -->
-:: Name and Pronouns
+
 <h2>Choose Your Name and Pronouns</h2>
 
 <!-- Name Entry Section -->
