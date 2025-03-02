@@ -1,5 +1,4 @@
-<!-- Class Selection -->
-:: Class Selection
+
 <<nobr>>
 <<if !$background>>
     <<goto "Background Selection">>
