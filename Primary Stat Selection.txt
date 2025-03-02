@@ -1,5 +1,4 @@
-<!-- Primary Stat Selection -->
-:: Primary Stat Selection
+
 <<nobr>>
 <<if !$class || $class.trim() === "">>
     <<goto "Class Selection">>
