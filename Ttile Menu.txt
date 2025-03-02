@@ -1,5 +1,4 @@
-<!-- Title Menu -->
-:: Title Menu
+
 <div class="title-screen-container">
     <div class="title-logo">
         <div class="logo-glow-effect"></div>
