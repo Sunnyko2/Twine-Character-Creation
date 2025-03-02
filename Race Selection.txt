@@ -1,5 +1,4 @@
-<!-- Race Selection -->
-:: Race Selection
+
 <<nobr>>
 <<if !$name || !$pronouns>>
     <<goto "Name and Pronouns">>
