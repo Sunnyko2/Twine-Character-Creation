@@ -1,5 +1,4 @@
-<!-- Character Creation Start -->
-:: Character Creation Start
+
 <div class="creation-intro-container">
     <h2 class="intro-heading">Begin Your Journey</h2>
     
