@@ -1,5 +1,3 @@
-<!-- Character Summary -->
-:: Character Summary
 <<nobr>>
 <<if $statPoints > 0>>
     <<goto "Primary Stat Selection">>
