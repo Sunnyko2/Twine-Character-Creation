@@ -1,5 +1,4 @@
-<!-- Background Selection -->
-:: Background Selection
+
 <<nobr>>
 <<if !$race>>
     <<goto "Race Selection">>
