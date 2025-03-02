@@ -878,16 +878,6 @@ input, select, textarea {
     max-width: 100%;
 }
 
-/* Ensure sufficient touch target sizes for mobile devices */
-button, 
-a, 
-.class-option button, 
-.pronoun-selection a, 
-.suggestion-buttons button,
-.stat-block button {
-    min-height: 44px;
-    min-width: 44px;
-}
 
 /* Improved colour contrast for text elements */
 p, li, label, input, select, textarea {
