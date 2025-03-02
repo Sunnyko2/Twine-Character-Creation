@@ -1,8 +1,7 @@
-
-// Initialize story variables
+// Initialize core variables
 Config.history.maxStates = 10;
 
-// Character creation state management
+// Character creation defaults
 setup.characterDefaults = {
     name: "",
     race: "",
@@ -22,16 +21,16 @@ setup.characterDefaults = {
     }
 };
 
-// Central error handler
+// Error handler
 setup.handleError = function(context, error) {
     console.error(`Error in ${context}:`, error);
     if (Config.debug) {
-        UI.alert(`Error in ${context}: ${error.message}`);
+        UI.alert(`Error: ${error.message}`);
     }
-    return false; // Return a value for function chaining
+    return false;
 };
 
-// Debounce function for event handling
+// Utility functions
 setup.debounce = function(func, wait) {
     let timeout;
     return function() {
@@ -42,10 +41,9 @@ setup.debounce = function(func, wait) {
     };
 };
 
-// Initialize or validate character state
+// Initialize character state
 setup.validateProgressionState = function() {
     try {
-        // Initialize character variables if they don't exist
         for (const [key, value] of Object.entries(setup.characterDefaults)) {
             if (State.variables[key] === undefined) {
                 if (typeof value === 'object' && value !== null) {
@@ -61,10 +59,9 @@ setup.validateProgressionState = function() {
     }
 };
 
-// Validate passage navigation based on creation progression
+// Validate progression
 setup.validatePassageNavigation = function(currentPassage) {
     try {
-        // Creation progression order
         const progressionOrder = [
             "Name and Pronouns",
             "Race Selection",
@@ -75,13 +72,10 @@ setup.validatePassageNavigation = function(currentPassage) {
             "Creation Complete"
         ];
         
-        // Determine current step index
         const currentIndex = progressionOrder.indexOf(currentPassage);
         
-        // If we're not in the progression, don't validate
         if (currentIndex === -1) return true;
         
-        // Check if requirements for current step are met
         switch(currentPassage) {
             case "Race Selection":
                 if (!State.variables.name || !State.variables.pronouns) {
@@ -131,11 +125,11 @@ setup.validatePassageNavigation = function(currentPassage) {
         return true;
     } catch (e) {
         setup.handleError("validatePassageNavigation", e);
-        return true; // Default to allowing navigation on error
+        return true;
     }
 };
 
-// Name validation with special character restrictions
+// Name validation
 setup.validateName = function(name) {
     try {
         if (!name) return "Please enter a name.";
@@ -149,7 +143,7 @@ setup.validateName = function(name) {
     }
 };
 
-// Point-buy system functions
+// Stat management
 setup.increaseStat = function(stat) {
     try {
         if (!State.variables.stats) {
@@ -254,7 +248,7 @@ setup.suggestName = function(type) {
     }
 };
 
-// UI Initialization functions
+// UI functionality
 setup.initTooltips = function() {
     try {
         $('.tooltip-trigger').off('mouseenter mouseleave');
@@ -272,7 +266,7 @@ setup.initTooltips = function() {
     }
 };
 
-// Background selection with bonus stat calculations
+// Background stat bonuses
 setup.selectBackground = function(background) {
     try {
         if (!State.variables.stats) {
@@ -281,7 +275,6 @@ setup.selectBackground = function(background) {
         
         State.variables.background = background;
         
-        // Only apply bonuses if they haven't been applied yet
         if (!State.variables.appliedBackgroundBonus) {
             switch(background) {
                 case "Noble":
@@ -331,15 +324,13 @@ setup.selectBackground = function(background) {
     }
 };
 
-// Initialize event handlers when a new passage renders
+// UI and navigation
 setup.initNavigation = function() {
     try {
-        // Set up data-passage links
         $('[data-passage]').off('click.navigation').on('click.navigation', function(event) {
             event.preventDefault();
             const passage = $(this).data('passage');
             if (passage) {
-                // Check if this is a next button that should be disabled
                 if ($(this).hasClass('next-button') && $(this).parent().find('.disabled-next').length > 0) {
                     return false;
                 }
@@ -353,7 +344,6 @@ setup.initNavigation = function() {
     }
 };
 
-// Initialize smooth scrolling for details panels
 setup.initSmoothScrolling = function() {
     try {
         $('button[data-select]').off('click.smooth-scroll').on('click.smooth-scroll', function() {
@@ -373,7 +363,6 @@ setup.initSmoothScrolling = function() {
     }
 };
 
-// Card selection highlight
 setup.initCardSelection = function() {
     try {
         $('.selection-card button').off('click.card-selection').on('click.card-selection', function() {
@@ -386,7 +375,6 @@ setup.initCardSelection = function() {
     }
 };
 
-// Race selection navigation
 setup.selectRace = function(race) {
     try {
         State.variables.race = race;
@@ -397,7 +385,6 @@ setup.selectRace = function(race) {
     }
 };
 
-// Validate name and continue to next step
 setup.validateNameAndContinue = function() {
     try {
         const nameError = setup.validateName(State.variables.tempName);
@@ -409,7 +396,6 @@ setup.validateNameAndContinue = function() {
             return false;
         }
         
-        // Check pronouns
         if (!State.variables.pronouns) {
             if ($('#pronoun-error').length) {
                 $('#pronoun-error').text("Please select your pronouns.").show();
@@ -417,7 +403,6 @@ setup.validateNameAndContinue = function() {
             return false;
         }
         
-        // Set the validated name and move forward
         State.variables.name = State.variables.tempName;
         State.variables.validName = true;
         Engine.play("Race Selection");
@@ -427,17 +412,15 @@ setup.validateNameAndContinue = function() {
     }
 };
 
-// Add screen reader ARIA attributes
+// Accessibility support
 setup.addScreenReaderDescriptions = function() {
     try {
-        // Add role for screen readers
         $('.background-option, .class-option')
             .attr('role', 'group')
             .attr('aria-label', function() {
                 return $(this).find('button').first().text().trim() + ' option';
             });
         
-        // Add descriptions to background options
         $('.background-option button, .class-option button').each(function() {
             const optionName = $(this).text().trim();
             const description = $(this).closest('.background-option, .class-option')
@@ -446,19 +429,16 @@ setup.addScreenReaderDescriptions = function() {
             $(this).attr('aria-label', `Select ${optionName}: ${description.substring(0, 100)}...`);
         });
         
-        // Add descriptions to name suggestion buttons
         $('.suggestion-buttons button').attr('aria-label', function() {
             return `Suggest ${$(this).text()} for your character`;
         });
         
-        // Add labels to race selection buttons
         $('[data-race]').each(function() {
             const raceName = $(this).attr('data-race');
             const description = $(this).closest('li').find('p').first().text().trim() || '';
             $(this).attr('aria-label', `Select ${raceName}: ${description.substring(0, 100)}...`);
         });
         
-        // Add ARIA live regions
         $('.selected-class-display, #selected-race, #selected-background, #selected-class')
             .attr('aria-live', 'polite');
             
@@ -468,19 +448,15 @@ setup.addScreenReaderDescriptions = function() {
     }
 };
 
-// Function to make elements properly focusable
 setup.makeElementsFocusable = function() {
     try {
-        // Ensure buttons are focusable with keyboard
         $('button:not([tabindex]), a:not([tabindex]), [role="button"]:not([tabindex])')
             .attr('tabindex', '0');
         
-        // Make sure disabled buttons are appropriately marked
         $('.disabled-button, button[disabled]')
             .attr('aria-disabled', 'true')
             .attr('tabindex', '-1');
             
-        // Ensure proper focus indication for interactive elements
         $('button, a, [role="button"]').each(function() {
             if (!$(this).css('outline') || $(this).css('outline') === 'none') {
                 $(this).css('outline-offset', '2px');
@@ -493,7 +469,6 @@ setup.makeElementsFocusable = function() {
     }
 };
 
-// Adjust layout for screen size
 setup.adjustLayoutForScreenSize = function() {
     try {
         const isMobile = window.innerWidth < 768;
@@ -506,7 +481,6 @@ setup.adjustLayoutForScreenSize = function() {
             $('body').removeClass('mobile-view');
         }
         
-        // Adjust font size based on screen width
         if (window.innerWidth < 480) {
             $('html').addClass('small-screen');
         } else {
@@ -519,7 +493,7 @@ setup.adjustLayoutForScreenSize = function() {
     }
 };
 
-// Combine all UI initialisation
+// Combined UI initialization
 setup.initializeUI = function() {
     try {
         setup.initTooltips();
@@ -536,10 +510,9 @@ setup.initializeUI = function() {
     }
 };
 
-// Initialize a new character
+// Reset character to defaults
 setup.initializeCharacter = function() {
     try {
-        // Reset all character properties to defaults
         for (const [key, value] of Object.entries(setup.characterDefaults)) {
             if (typeof value === 'object' && value !== null) {
                 State.variables[key] = jQuery.extend(true, {}, value);
@@ -554,7 +527,7 @@ setup.initializeCharacter = function() {
     }
 };
 
-// Confirm restart to prevent accidental data loss
+// Confirm reset
 setup.confirmRestart = function() {
     try {
         if (State.variables.name || State.variables.race || State.variables.background || State.variables.class) {
@@ -563,14 +536,13 @@ setup.confirmRestart = function() {
         return true;
     } catch (e) {
         setup.handleError("confirmRestart", e);
-        return true; // Default to allowing restart if there's an error
+        return true;
     }
 };
 
-// Character save and load functions using SugarCube's storage API
+// Save character
 setup.saveCharacter = function() {
     try {
-        // Create a character object from the current state variables
         const character = {
             name: State.variables.name || "",
             race: State.variables.race || "",
@@ -587,7 +559,6 @@ setup.saveCharacter = function() {
             })
         };
         
-        // Use SugarCube's state metadata for character storage
         State.metadata.set('savedCharacter', character);
         return JSON.stringify(character);
     } catch (e) {
@@ -597,6 +568,7 @@ setup.saveCharacter = function() {
     }
 };
 
+// Load character
 setup.loadCharacter = function() {
     try {
         if (!State.metadata.has('savedCharacter')) {
@@ -611,7 +583,6 @@ setup.loadCharacter = function() {
             return null;
         }
         
-        // Restore character data to state
         State.variables.name = character.name || "";
         State.variables.race = character.race || "";
         State.variables.background = character.background || "";
@@ -620,7 +591,6 @@ setup.loadCharacter = function() {
         State.variables.classDesc = character.classDesc || "";
         State.variables.pronouns = character.pronouns || "";
         
-        // Make a deep copy of stats to avoid reference issues
         State.variables.stats = jQuery.extend(true, {}, character.stats || {
             strength: 10,
             dexterity: 10,
@@ -628,7 +598,6 @@ setup.loadCharacter = function() {
             charisma: 10
         });
         
-        // Calculate stat points remaining (assuming default points were 10)
         let spentPoints = 0;
         for (const stat in State.variables.stats) {
             if (State.variables.stats.hasOwnProperty(stat)) {
@@ -645,22 +614,20 @@ setup.loadCharacter = function() {
     }
 };
 
-// Custom macro for character stat blocks in the point-buy system
+// Custom stat block macro
 Macro.add('statBlock', {
     handler: function() {
         try {
             if (this.args.length < 1) {
-                return this.error('The <<statBlock>> macro requires a stat name as an argument');
+                return this.error('<<statBlock>> requires a stat name argument');
             }
             
             const stat = this.args[0];
             
-            // Ensure stats are initialised
             if (!State.variables.stats) {
                 State.variables.stats = jQuery.extend(true, {}, setup.characterDefaults.stats);
             }
             
-            // If the requested stat doesn't exist yet, initialise it
             if (!(stat in State.variables.stats)) {
                 State.variables.stats[stat] = 10;
             }
@@ -669,7 +636,6 @@ Macro.add('statBlock', {
             const modifier = Math.floor((value - 10) / 2);
             const modifierText = (modifier >= 0) ? `+${modifier}` : `${modifier}`;
             
-            // Use SugarCube's event handling approach instead of direct onclick
             const output = `
             <div class="stat-block tooltip-trigger" aria-label="${stat.charAt(0).toUpperCase() + stat.slice(1)} stat block">
                 <label for="${stat}-value">${stat.charAt(0).toUpperCase() + stat.slice(1)}</label>
@@ -684,19 +650,16 @@ Macro.add('statBlock', {
             
             $(this.output).wiki(output);
             
-            // Attach event handlers *after* adding to DOM
             $(this.output).find(`#increase-${stat}`).on('click', function() {
                 if (State.variables.statPoints > 0 && State.variables.stats[stat] < 18) {
                     State.variables.stats[stat]++;
                     State.variables.statPoints--;
-                    // Update display
                     $(`#${stat}-value`).text(State.variables.stats[stat]);
                     const newMod = Math.floor((State.variables.stats[stat] - 10) / 2);
                     const newModText = (newMod >= 0) ? `+${newMod}` : `${newMod}`;
                     $(`#${stat}-modifier`).text(newModText);
                     $('#points-remaining').text(State.variables.statPoints);
                     
-                    // Update button states
                     if (State.variables.stats[stat] >= 18) {
                         $(this).attr('disabled', true).attr('aria-disabled', 'true');
                     }
@@ -712,14 +675,12 @@ Macro.add('statBlock', {
                 if (State.variables.stats[stat] > 8) {
                     State.variables.stats[stat]--;
                     State.variables.statPoints++;
-                    // Update display
                     $(`#${stat}-value`).text(State.variables.stats[stat]);
                     const newMod = Math.floor((State.variables.stats[stat] - 10) / 2);
                     const newModText = (newMod >= 0) ? `+${newMod}` : `${newMod}`;
                     $(`#${stat}-modifier`).text(newModText);
                     $('#points-remaining').text(State.variables.statPoints);
                     
-                    // Update button states
                     if (State.variables.stats[stat] <= 8) {
                         $(this).attr('disabled', true).attr('aria-disabled', 'true');
                     }
@@ -736,54 +697,35 @@ Macro.add('statBlock', {
                 }
             });
         } catch (e) {
-            return this.error(`Error in statBlock macro: ${e.message}`);
+            return this.error(`Error in statBlock: ${e.message}`);
         }
     }
 });
 
-// -------------------------------
-// Event Handlers and Enhancements
-// -------------------------------
-
-// Story startup event handlers
+// Event handlers
 $(document).one(':storyready', function() {
-    // Initialize character state
     setup.validateProgressionState();
-    
-    // Initialise accessibility settings and apply them
     setup.initializeAccessibility();
     setup.applyAccessibilitySettings();
     
-    // Setup keyboard navigation (if not already defined)
     if (!setup.setupKeyboardNavigation) {
-        setup.setupKeyboardNavigation = function() {
-            // Keyboard navigation is handled by the global keydown event below.
-        };
+        setup.setupKeyboardNavigation = function() {};
     }
     setup.setupKeyboardNavigation();
     
-    // Adjust layout for current screen size
     setup.adjustLayoutForScreenSize();
 });
 
-// Passage transition event handlers
 $(document).on(':passagestart', function(ev) {
-    // Validate navigation
     setup.validatePassageNavigation(ev.passage.title);
 });
 
 $(document).on(':passagerender', function(ev) {
-    // Initialise UI
     setup.initializeUI();
 });
 
-// -------------------------------
-// Enhanced Accessibility Settings
-// -------------------------------
-
-// 1. Improved screen reader accessibility for interactive elements
+// Accessibility enhancements
 $(document).on(':passagerender', function() {
-    // Improve ARIA labels for all interactive elements
     $('.class-option button, .selection-card button').each(function() {
         const optionName = $(this).text().trim();
         const description = $(this).closest('.class-option, .selection-card')
@@ -792,35 +734,27 @@ $(document).on(':passagerender', function() {
         $(this).attr('aria-label', `Select ${optionName}: ${description.substring(0, 100)}...`);
     });
     
-    // Make interactive elements properly focusable
     $('button:not([tabindex]), a:not([tabindex]), [role="button"]:not([tabindex])')
         .attr('tabindex', '0');
     
-    // Ensure disabled buttons are properly marked for screen readers
     $('.disabled-button, button[disabled]')
         .attr('aria-disabled', 'true')
         .attr('tabindex', '-1');
     
-    // Add ARIA live regions to dynamic content areas
     $('.selected-class-display, #selected-race, #selected-background, #selected-class')
         .attr('aria-live', 'polite');
     
-    // Make error messages accessible to screen readers
     $('.error').attr('aria-live', 'assertive');
     
-    // Add proper roles to selection grids
     $('.class-options, .selection-grid').attr('role', 'group');
     $('.class-option, .selection-card').attr('role', 'group');
     
-    // Improve skip navigation
     if ($('#skip-to-content').length === 0) {
         $('body').prepend('<a id="skip-to-content" href="#passages">Skip to content</a>');
     }
 });
 
-// 2. Enhanced keyboard navigation for grid layouts and Enter key support
 $(document).on('keydown', function(e) {
-    // Handle arrow key navigation in grid layouts
     if (e.key === 'ArrowRight' || e.key === 'ArrowLeft' || 
         e.key === 'ArrowUp' || e.key === 'ArrowDown') {
         
@@ -829,7 +763,6 @@ $(document).on('keydown', function(e) {
             const currentElement = document.activeElement;
             
             if (!focusableElements.includes(currentElement)) {
-                // If no element is focused, focus the first one on any arrow key
                 focusableElements[0].focus();
                 e.preventDefault();
                 return;
@@ -837,7 +770,7 @@ $(document).on('keydown', function(e) {
             
             const currentIndex = focusableElements.indexOf(currentElement);
             const columnsCount = Math.floor($('.class-options, .selection-grid').width() / 
-                                            $('.class-option, .selection-card').first().outerWidth(true)) || 3;
+                                        $('.class-option, .selection-card').first().outerWidth(true)) || 3;
             
             let newIndex = currentIndex;
             
@@ -858,7 +791,6 @@ $(document).on('keydown', function(e) {
         }
     }
     
-    // Add Enter key support for elements with role="button"
     if (e.key === 'Enter') {
         const activeElement = document.activeElement;
         if (activeElement && $(activeElement).attr('role') === 'button') {
@@ -868,76 +800,57 @@ $(document).on('keydown', function(e) {
     }
 });
 
-// 3. Add accessibility menu button to the page if it doesn't exist
-$(document).on(':passagerender', function() {
-    if ($('#accessibility-menu-button').length === 0) {
-        $('#passages').prepend(
-            $('<button id="accessibility-menu-button" aria-label="Accessibility Settings">')
-                .text('Accessibility')
-                .on('click', function() {
-                    UI.settings();
-                })
-        );
-    }
-});
-
-// 4. Improved tooltips for screen readers
-$(document).on(':passagerender', function() {
-    $('.tooltip-trigger').each(function() {
-        // Extract tooltip text
-        const tooltipText = $(this).find('.tooltip').text();
-        if (tooltipText && !$(this).attr('aria-label')) {
-            $(this).attr('aria-label', tooltipText);
+// Accessibility settings
+setup.initializeAccessibility = function() {
+    try {
+        if (!State.variables.accessibility) {
+            State.variables.accessibility = {
+                fontSize: settings.fontSize || 'medium',
+                highContrast: settings.highContrast || false,
+                reduceAnimations: settings.reduceAnimations || false,
+                focusHighlight: settings.focusHighlight || false
+            };
         }
-    });
-});
-
-// 5. Ensure screen reader announcements for error messages
-$(document).on(':passagerender', function() {
-    // Monitor changes to error messages
-    const observer = new MutationObserver(function(mutations) {
-        mutations.forEach(function(mutation) {
-            if (mutation.type === 'childList' && mutation.addedNodes.length > 0) {
-                const errorText = $(mutation.target).text().trim();
-                if (errorText) {
-                    // Announce the error
-                    $(mutation.target).attr('role', 'alert');
-                }
-            }
-        });
-    });
-    
-    // Observe error message containers
-    $('.error').each(function() {
-        observer.observe(this, { childList: true, subtree: true });
-    });
-});
-
-// 6. Improve screen reader experience for stat points
-$(document).on(':passagerender', function() {
-    // Ensure stat distribution is accessible
-    if ($('.stat-distribution').length > 0) {
-        $('.stat-distribution').attr('aria-label', 'Stat distribution panel');
-        
-        // Improve stat block accessibility
-        $('.stat-block').each(function() {
-            const statName = $(this).find('label').text();
-            const statValue = $(this).find('[id$="-value"]').text();
-            
-            $(this).find('button[id^="increase-"]').attr('aria-label', `Increase ${statName} (currently ${statValue})`);
-            $(this).find('button[id^="decrease-"]').attr('aria-label', `Decrease ${statName} (currently ${statValue})`);
-        });
-        
-        // Make points remaining more accessible
-        $('#points-remaining').parent().attr('role', 'status')
-            .attr('aria-label', 'Points remaining: ' + $('#points-remaining').text());
+        return true;
+    } catch (e) {
+        return setup.handleError("initializeAccessibility", e);
     }
-});
+};
 
-// -------------------------------
-// Updated Accessibility Settings Options
-// -------------------------------
+setup.applyAccessibilitySettings = function() {
+    try {
+        const html = document.documentElement;
+        
+        if (settings.fontSize) {
+            html.classList.remove('text-small', 'text-medium', 'text-large', 'text-extra-large');
+            html.classList.add('text-' + settings.fontSize);
+        }
+        
+        if (settings.highContrast) {
+            html.classList.add('high-contrast');
+        } else {
+            html.classList.remove('high-contrast');
+        }
+        
+        if (settings.reduceAnimations) {
+            html.classList.add('reduce-motion');
+        } else {
+            html.classList.remove('reduce-motion');
+        }
+        
+        if (settings.focusHighlight) {
+            html.classList.add('enhanced-focus');
+        } else {
+            html.classList.remove('enhanced-focus');
+        }
+        
+        return true;
+    } catch (e) {
+        return setup.handleError("applyAccessibilitySettings", e);
+    }
+};
 
+// Accessibility settings
 Setting.addHeader("Accessibility", "Options to improve game accessibility");
 
 Setting.addList("fontSize", {
@@ -1014,57 +927,3 @@ Setting.addToggle("focusHighlight", {
         }
     }
 });
-
-// Accessibility functions (already defined below in the file)
-setup.initializeAccessibility = function() {
-    try {
-        if (!State.variables.accessibility) {
-            State.variables.accessibility = {
-                fontSize: settings.fontSize || 'medium',
-                highContrast: settings.highContrast || false,
-                reduceAnimations: settings.reduceAnimations || false,
-                focusHighlight: settings.focusHighlight || false
-            };
-        }
-        return true;
-    } catch (e) {
-        return setup.handleError("initializeAccessibility", e);
-    }
-};
-
-setup.applyAccessibilitySettings = function() {
-    try {
-        const html = document.documentElement;
-        
-        // Apply font size
-        if (settings.fontSize) {
-            html.classList.remove('text-small', 'text-medium', 'text-large', 'text-extra-large');
-            html.classList.add('text-' + settings.fontSize);
-        }
-        
-        // Apply contrast
-        if (settings.highContrast) {
-            html.classList.add('high-contrast');
-        } else {
-            html.classList.remove('high-contrast');
-        }
-        
-        // Apply animation reduction
-        if (settings.reduceAnimations) {
-            html.classList.add('reduce-motion');
-        } else {
-            html.classList.remove('reduce-motion');
-        }
-        
-        // Apply focus highlighting
-        if (settings.focusHighlight) {
-            html.classList.add('enhanced-focus');
-        } else {
-            html.classList.remove('enhanced-focus');
-        }
-        
-        return true;
-    } catch (e) {
-        return setup.handleError("applyAccessibilitySettings", e);
-    }
-};
