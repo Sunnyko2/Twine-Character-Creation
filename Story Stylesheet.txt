@@ -1,6 +1,6 @@
-/* Base Variables */
+/* Core Variables */
 :root {
-    /* Colour scheme */
+    /* Colors */
     --neon-primary: #00FFBB;
     --neon-primary-dim: rgba(0, 255, 187, 0.1);
     --neon-primary-mid: rgba(0, 255, 187, 0.3);
@@ -10,14 +10,14 @@
     --dark-secondary: #1A1B23;
     --medieval-gold: #FFD700;
     
-    /* Spacing */
+    /* Layout */
     --spacing-xs: 0.5em;
     --spacing-sm: 1em;
     --spacing-md: 1.5em;
     --spacing-lg: 2em;
     --spacing-xl: 3em;
     
-    /* Font sizes */
+    /* Typography */
     --font-size-xs: 0.8em;
     --font-size-sm: 0.9em;
     --font-size-md: 1em;
@@ -26,25 +26,22 @@
     --font-size-xxl: 2em;
     --font-size-title: 4em;
     
-    /* Border radius */
     --border-radius: 4px;
-    
-    /* Transitions */
     --transition-speed: 0.3s;
     
-    /* Shadows */
+    /* Effects */
     --glow-small: 0 0 10px var(--neon-primary);
     --glow-medium: 0 0 15px var(--neon-primary);
     --glow-large: 0 0 20px var(--neon-primary);
     
-    /* Z-index layers - adjusted to work with SugarCube's UI */
+    /* Z-index layers */
     --z-background: 0;
     --z-content: 10;
     --z-overlay: 100;
-    --z-modal: 900; /* Lower than SugarCube's dialog z-index */
+    --z-modal: 900;
 }
 
-/* Skip to content link - hidden until focused */
+/* Accessibility */
 #skip-to-content {
     position: absolute;
     top: -40px;
@@ -60,12 +57,11 @@
     outline: 3px solid var(--neon-secondary);
 }
 
-/* Background image for title screen */
+/* Title Screen */
 .title-screen-container {
     background-image: url('https://github.com/Sunnyko2/twine-images-final/blob/main/Background%20Imahe%20Final.png?raw=true');
     background-size: cover;
     background-position: center;
-    background-repeat: no-repeat;
     position: relative;
     display: flex;
     flex-direction: column;
@@ -78,7 +74,7 @@
     max-width: none;
     overflow: hidden;
 }
-/* Semi-transparent overlay to improve text readability */
+
 .title-screen-container::before {
     content: '';
     position: absolute;
@@ -94,12 +90,12 @@
     animation: gradientShift 15s ease infinite;
     z-index: 0;
 }
-/* Ensure content appears above the overlay */
+
 .title-logo, .title-menu, .version-info {
     position: relative;
     z-index: 1;
 }
-/* Title text enhancements */
+
 .game-title {
     text-shadow: 0 0 20px rgba(0, 0, 0, 0.8), 0 0 30px rgba(0, 255, 187, 0.6);
 }
@@ -107,7 +103,7 @@
     text-shadow: 0 0 15px rgba(0, 0, 0, 0.8), 0 0 20px rgba(255, 107, 107, 0.6);
 }
 
-/* Base styles */
+/* Base Styles */
 html {
     margin: 0;
     padding: 0;
@@ -125,25 +121,13 @@ body {
     font-size: inherit;
 }
 
-/* Font size classes for accessibility - overridden with pixel values */
-.text-small { 
-    font-size: 14px; 
-    line-height: 1.4;
-}
-.text-medium { 
-    font-size: 16px; 
-    line-height: 1.6;
-}
-.text-large { 
-    font-size: 18px; 
-    line-height: 1.7;
-}
-.text-extra-large { 
-    font-size: 20px; 
-    line-height: 1.8;
-}
+/* Accessibility Variants */
+.text-small { font-size: 14px; line-height: 1.4; }
+.text-medium { font-size: 16px; line-height: 1.6; }
+.text-large { font-size: 18px; line-height: 1.7; }
+.text-extra-large { font-size: 20px; line-height: 1.8; }
 
-/* High contrast mode with improved contrast ratios */
+/* High Contrast Mode */
 .high-contrast {
     --neon-primary: #00FF00;
     --neon-primary-dim: rgba(0, 255, 0, 0.1);
@@ -185,7 +169,7 @@ body {
     text-shadow: none;
 }
 
-/* Enhanced focus indicators */
+/* Focus States */
 .enhanced-focus a:focus,
 .enhanced-focus button:focus,
 .enhanced-focus input:focus,
@@ -197,24 +181,22 @@ body {
     outline-offset: 3px !important;
     box-shadow: 0 0 0 3px rgba(255, 107, 107, 0.4) !important;
 }
-/* Better focus visibility for all users */
 a:focus, button:focus, input:focus, select:focus, [role="button"]:focus {
     outline: 2px solid var(--neon-primary);
     outline-offset: 2px;
 }
 
-/* Reduce animations */
+/* Reduce Animations */
 .reduce-animations * {
     animation-duration: 0.001s !important;
     transition-duration: 0.001s !important;
 }
 
-/* Limited will-change properties for critical elements */
 .title-button, .glow-button {
     will-change: transform, background-color, box-shadow;
 }
 
-/* Full screen utilisation */
+/* Layout */
 #story {
     max-width: 100%;
     margin: 0;
@@ -228,7 +210,6 @@ a:focus, button:focus, input:focus, select:focus, [role="button"]:focus {
     margin: 0 auto;
     padding: var(--spacing-lg) 0;
 }
-/* Remove default passage background */
 .passage {
     background: transparent !important;
     border: none !important;
@@ -237,7 +218,7 @@ a:focus, button:focus, input:focus, select:focus, [role="button"]:focus {
     max-width: 100%;
 }
 
-/* Enhanced headers */
+/* Typography */
 h1, h2 {
     text-align: center;
     color: var(--medieval-gold);
@@ -268,7 +249,7 @@ h3 {
     margin: var(--spacing-md) 0 var(--spacing-sm);
 }
 
-/* Title Page Styles */
+/* Title Screen Components */
 .title-screen-container {
     display: flex;
     flex-direction: column;
@@ -302,7 +283,8 @@ h3 {
     width: 100%;
     max-width: 300px;
 }
-/* Touch-enhanced interactive elements */
+
+/* Buttons and Interactive Elements */
 .title-button, .glow-button, button, a {
     -webkit-tap-highlight-color: transparent;
     touch-action: manipulation;
@@ -324,8 +306,6 @@ h3 {
 .title-button:hover, .glow-button:hover {
     background: var(--neon-primary);
     color: var(--dark-primary);
-    -webkit-transform: scale(1.05);
-    -ms-transform: scale(1.05);
     transform: scale(1.05);
     box-shadow: var(--glow-medium);
 }
@@ -335,7 +315,7 @@ h3 {
     font-size: var(--font-size-xs);
 }
 
-/* Creation intro container */
+/* Creation Intro */
 .creation-intro-container {
     max-width: 800px;
     margin: 0 auto;
@@ -361,7 +341,7 @@ h3 {
     margin-top: var(--spacing-lg);
 }
 
-/* Progress tracker styling */
+/* Progress Tracker */
 .creation-progress {
     display: flex;
     justify-content: space-between;
@@ -396,17 +376,17 @@ h3 {
     align-items: center;
     justify-content: center;
     margin-bottom: 0.5em;
-    min-width: 30px; /* Added for accessibility */
-    min-height: 30px; /* Added for accessibility */
+    min-width: 30px;
+    min-height: 30px;
 }
 .progress-step-label {
     font-size: var(--font-size-xs);
     text-align: center;
     max-width: 80px;
-    min-height: 2.5em; /* Added for accessibility */
+    min-height: 2.5em;
 }
 
-/* Name and Pronoun Entry Styles */
+/* Name Entry */
 .name-entry {
     text-align: center;
     margin: var(--spacing-lg) 0;
@@ -478,8 +458,6 @@ input[type="text"]:focus {
 .pronoun-selection a:hover {
     background: var(--neon-primary);
     color: var(--dark-primary);
-    -webkit-transform: scale(1.05);
-    -ms-transform: scale(1.05);
     transform: scale(1.05);
 }
 .selected-pronoun-display {
@@ -489,7 +467,7 @@ input[type="text"]:focus {
     color: var(--neon-primary);
 }
 
-/* Error messages - enhanced with padding and border */
+/* Error Messages */
 .error {
     color: var(--neon-secondary);
     font-weight: bold;
@@ -499,7 +477,7 @@ input[type="text"]:focus {
     min-height: 1.5em;
 }
 
-/* Class/Background/Race selection styling */
+/* Selection Components */
 .class-options {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
@@ -514,8 +492,6 @@ input[type="text"]:focus {
     transition: all var(--transition-speed) ease;
 }
 .class-option:hover {
-    -webkit-transform: translateY(-5px);
-    -ms-transform: translateY(-5px);
     transform: translateY(-5px);
     box-shadow: 0 0 15px rgba(0, 255, 187, 0.2);
 }
@@ -549,7 +525,7 @@ input[type="text"]:focus {
     border-radius: var(--border-radius);
 }
 
-/* Button styling for standard buttons */
+/* Button Styles */
 button {
     display: inline-block;
     padding: 0.7em 1.5em;
@@ -565,8 +541,6 @@ button {
 button:hover {
     background: var(--neon-primary);
     color: var(--dark-primary);
-    -webkit-transform: scale(1.05);
-    -ms-transform: scale(1.05);
     transform: scale(1.05);
 }
 button:focus {
@@ -577,7 +551,6 @@ button[data-select] {
     width: 100%;
     margin-top: auto;
 }
-/* Disabled button style */
 button[disabled], 
 .disabled-button,
 button[aria-disabled="true"] {
@@ -592,47 +565,11 @@ button[disabled]:hover,
 button[aria-disabled="true"]:hover {
     background: rgba(255, 255, 255, 0.05);
     color: #888;
-    -webkit-transform: none;
-    -ms-transform: none;
     transform: none;
     box-shadow: none;
 }
 
-/* Details panel */
-.details-panel {
-    background: rgba(10, 11, 18, 0.7);
-    border: 1px solid var(--neon-primary);
-    border-radius: var(--border-radius);
-    padding: var(--spacing-lg);
-    animation: fadeIn var(--transition-speed) ease-in-out;
-    margin-top: var(--spacing-md);
-}
-.details-panel h3 {
-    color: var(--neon-primary);
-    margin-bottom: var(--spacing-sm);
-    font-size: var(--font-size-lg);
-}
-
-/* Perk and skill lists */
-.perk-list {
-    margin: var(--spacing-md) 0;
-    padding: var(--spacing-sm);
-    background: rgba(0, 255, 187, 0.05);
-    border-radius: var(--border-radius);
-}
-.perk-item {
-    margin-bottom: 0.5em;
-    position: relative;
-    padding-left: 1.5em;
-}
-.perk-item::before {
-    content: '•';
-    position: absolute;
-    left: 0.5em;
-    color: var(--neon-primary);
-}
-
-/* Navigation controls */
+/* Navigation */
 .navigation-controls {
     display: flex;
     justify-content: space-between;
@@ -653,8 +590,6 @@ button[aria-disabled="true"]:hover {
 .back-button:hover {
     background: var(--neon-secondary);
     color: var(--dark-primary);
-    -webkit-transform: scale(1.05);
-    -ms-transform: scale(1.05);
     transform: scale(1.05);
 }
 .back-button:focus {
@@ -675,8 +610,6 @@ button.next-button {
 button.next-button:hover {
     background: var(--neon-primary);
     color: var(--dark-primary);
-    -webkit-transform: scale(1.05);
-    -ms-transform: scale(1.05);
     transform: scale(1.05);
 }
 .disabled-next {
@@ -689,7 +622,7 @@ button.next-button:hover {
     cursor: not-allowed;
 }
 
-/* Stat distribution */
+/* Stat Distribution */
 .stat-distribution {
     max-width: 800px;
     margin: var(--spacing-lg) auto;
@@ -738,22 +671,7 @@ button.next-button:hover {
     margin: 0 2px;
 }
 
-/* Stat explanation */
-.stat-explanation {
-    margin-top: var(--spacing-md);
-    font-size: var(--font-size-sm);
-    border-top: 1px solid var(--neon-primary-mid);
-    padding-top: var(--spacing-sm);
-}
-.background-bonus {
-    display: inline-block;
-    padding: 0.3em 0.8em;
-    background: var(--neon-primary-dim);
-    border-radius: var(--border-radius);
-    margin: 0.5em 0;
-}
-
-/* Character card for summary */
+/* Character Summary */
 .character-card {
     background: rgba(10, 11, 18, 0.8);
     border: 1px solid var(--neon-primary);
@@ -785,10 +703,6 @@ button.next-button:hover {
 .character-section-title {
     color: var(--neon-primary);
     margin-bottom: var(--spacing-sm);
-}
-.character-section p {
-    margin: 0.5em 0;
-    line-height: 1.5;
 }
 .character-info-grid {
     display: grid;
@@ -830,7 +744,7 @@ button.next-button:hover {
     color: var(--neon-primary);
 }
 
-/* Completion page */
+/* Completion Screen */
 .completion-message {
     text-align: center;
     background: rgba(10, 11, 18, 0.7);
@@ -839,14 +753,6 @@ button.next-button:hover {
     padding: var(--spacing-xl);
     margin: var(--spacing-lg) 0;
 }
-.character-save {
-    margin: var(--spacing-lg) 0;
-}
-#save-message {
-    color: var(--neon-primary);
-    height: 2em;
-    margin: var(--spacing-sm) 0;
-}
 .completion-controls {
     display: flex;
     justify-content: center;
@@ -854,7 +760,7 @@ button.next-button:hover {
     margin-top: var(--spacing-lg);
 }
 
-/* Accessibility menu button - Enhanced styling */
+/* Accessibility Menu */
 #accessibility-menu-button {
     position: fixed;
     top: 1em;
@@ -872,19 +778,7 @@ button.next-button:hover {
     color: var(--dark-primary);
 }
 
-/* Improved form elements for accessibility */
-input, select, textarea {
-    font-size: 100%; /* Ensures text remains legible when zooming */
-    max-width: 100%;
-}
-
-
-/* Improved colour contrast for text elements */
-p, li, label, input, select, textarea {
-    color: #FFFFFF;
-}
-
-/* Supporting reduced motion */
+/* Reduced Motion Support */
 @media (prefers-reduced-motion: reduce) {
     *, *::before, *::after {
         animation-duration: 0.001s !important;
@@ -902,17 +796,6 @@ p, li, label, input, select, textarea {
     to {
         opacity: 1;
         transform: translateY(0);
-    }
-}
-@keyframes glow {
-    0% {
-        box-shadow: 0 0 5px var(--neon-primary);
-    }
-    50% {
-        box-shadow: 0 0 15px var(--neon-primary), 0 0 30px var(--neon-primary-dim);
-    }
-    100% {
-        box-shadow: 0 0 5px var(--neon-primary);
     }
 }
 
