@@ -1,5 +1,4 @@
-<!-- Creation Complete -->
-:: Creation Complete
+
 <<nobr>>
 <<if !$pronouns || $pronouns.trim() === "">>
     <<goto "Character Summary">>
