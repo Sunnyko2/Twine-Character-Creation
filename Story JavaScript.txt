@@ -59,9 +59,12 @@ setup.validateProgressionState = function() {
     }
 };
 
-// Validate progression
+// Improved validation and progression
 setup.validatePassageNavigation = function(currentPassage) {
     try {
+        // First ensure all variables are properly initialized
+        setup.validateProgressionState();
+        
         const progressionOrder = [
             "Name and Pronouns",
             "Race Selection",
@@ -76,50 +79,32 @@ setup.validatePassageNavigation = function(currentPassage) {
         
         if (currentIndex === -1) return true;
         
-        switch(currentPassage) {
-            case "Race Selection":
-                if (!State.variables.name || !State.variables.pronouns) {
-                    Engine.play("Name and Pronouns");
-                    return false;
-                }
-                break;
-                
-            case "Background Selection":
-                if (!State.variables.race) {
-                    Engine.play("Race Selection");
-                    return false;
-                }
-                break;
-                
-            case "Class Selection":
-                if (!State.variables.background) {
-                    Engine.play("Background Selection");
-                    return false;
-                }
-                break;
-                
-            case "Primary Stat Selection":
-                if (!State.variables.class) {
-                    Engine.play("Class Selection");
-                    return false;
-                }
-                break;
-                
-            case "Character Summary":
-                if (State.variables.statPoints !== 0) {
-                    Engine.play("Primary Stat Selection");
-                    return false;
-                }
-                break;
-                
-            case "Creation Complete":
-                if (!State.variables.name || !State.variables.race || 
-                    !State.variables.background || !State.variables.class || 
-                    State.variables.statPoints !== 0) {
-                    Engine.play("Character Summary");
-                    return false;
-                }
-                break;
+        // Define prerequisites for each step
+        const prerequisites = {
+            "Race Selection": () => State.variables.name && State.variables.pronouns,
+            "Background Selection": () => State.variables.race,
+            "Class Selection": () => State.variables.background,
+            "Primary Stat Selection": () => State.variables.class,
+            "Character Summary": () => State.variables.statPoints === 0,
+            "Creation Complete": () => State.variables.name && State.variables.race && 
+                                       State.variables.background && State.variables.class && 
+                                       State.variables.statPoints === 0
+        };
+        
+        // Check if prerequisites are met
+        if (prerequisites[currentPassage] && !prerequisites[currentPassage]()) {
+            // Default fallback redirections
+            const fallbackRedirects = {
+                "Race Selection": "Name and Pronouns",
+                "Background Selection": "Race Selection",
+                "Class Selection": "Background Selection",
+                "Primary Stat Selection": "Class Selection",
+                "Character Summary": "Primary Stat Selection",
+                "Creation Complete": "Character Summary"
+            };
+            
+            Engine.play(fallbackRedirects[currentPassage]);
+            return false;
         }
         
         return true;
@@ -441,6 +426,8 @@ setup.addScreenReaderDescriptions = function() {
         
         $('.selected-class-display, #selected-race, #selected-background, #selected-class')
             .attr('aria-live', 'polite');
+        
+        $('.error').attr('aria-live', 'assertive');
             
         return true;
     } catch (e) {
@@ -589,6 +576,86 @@ setup.loadCharacter = function() {
         return null;
     }
 };
+
+// Selection page macro for reducing redundancy
+Macro.add('selectionPage', {
+    tags: ['options', 'navigation'],
+    handler: function() {
+        try {
+            if (this.args.length < 3) {
+                return this.error('The <<selectionPage>> macro requires at least 3 arguments: stepNumber, pageTitle, itemType');
+            }
+            
+            const [stepNumber, pageTitle, itemType] = this.args;
+            const selectedDivId = this.args[3] || `selected-${itemType.toLowerCase()}`;
+            const nextPassage = this.args[4] || `${itemType} Selection`;
+            
+            // Process the steps array from the options tag
+            let steps = [];
+            if (this.payload[0] && this.payload[0].args.length > 0) {
+                steps = this.payload[0].args;
+            } else {
+                steps = ["Name", "Race", "Background", "Class", "Stats", "Finish"];
+            }
+            
+            // Progress bar HTML
+            let output = `<div class="creation-progress">`;
+            for (let i = 1; i <= 6; i++) {
+                output += `
+                <div class="progress-step ${i < stepNumber ? 'completed' : i === stepNumber ? 'active' : ''}">
+                    <span>${i}</span>
+                    <span class="progress-step-label">${steps[i-1] || `Step ${i}`}</span>
+                </div>`;
+            }
+            output += `</div>`;
+            
+            // Page title
+            output += `<h2>${pageTitle}</h2>`;
+            
+            // Options container
+            output += `<div class="class-options">`;
+            if (this.payload[0]) {
+                output += this.payload[0].contents;
+            }
+            output += `</div>`;
+            
+            // Selected item display
+            output += `
+            <div id="${selectedDivId}" class="selected-class-display">
+                <<if $temp${itemType} != "">>
+                    Selected ${itemType.toLowerCase()}: <<print $temp${itemType}>>
+                    <br>
+                    <<print $temp${itemType}Desc>>
+                <</if>>
+            </div>`;
+            
+            // Error display
+            output += `<div id="${itemType.toLowerCase()}-error" class="error"></div>`;
+            
+            // Navigation buttons
+            output += `<div class="navigation-controls">`;
+            if (this.payload[1]) {
+                output += this.payload[1].contents;
+            } else {
+                output += `
+                <<button "Continue to ${nextPassage}">>
+                    <<if $temp${itemType} and $temp${itemType}.trim() !== "">>
+                        <<set $${itemType.toLowerCase()} to $temp${itemType}>>
+                        <<set $${itemType.toLowerCase()}Desc to $temp${itemType}Desc>>
+                        <<goto "${nextPassage}">>
+                    <<else>>
+                        <<replace "#${itemType.toLowerCase()}-error">>Please select a ${itemType.toLowerCase()}.<</replace>>
+                    <</if>>
+                <</button>>`;
+            }
+            output += `</div>`;
+            
+            $(this.output).wiki(output);
+        } catch (e) {
+            return this.error(`Error in selectionPage macro: ${e.message}`);
+        }
+    }
+});
 
 // Custom stat block macro
 Macro.add('statBlock', {
