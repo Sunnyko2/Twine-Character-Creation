@@ -469,30 +469,6 @@ setup.makeElementsFocusable = function() {
     }
 };
 
-setup.adjustLayoutForScreenSize = function() {
-    try {
-        const isMobile = window.innerWidth < 768;
-        
-        if (isMobile) {
-            $('.selection-grid, .class-options').addClass('mobile-layout');
-            $('body').addClass('mobile-view');
-        } else {
-            $('.selection-grid, .class-options').removeClass('mobile-layout');
-            $('body').removeClass('mobile-view');
-        }
-        
-        if (window.innerWidth < 480) {
-            $('html').addClass('small-screen');
-        } else {
-            $('html').removeClass('small-screen');
-        }
-        
-        return true;
-    } catch (e) {
-        return setup.handleError("adjustLayoutForScreenSize", e);
-    }
-};
-
 // Combined UI initialization
 setup.initializeUI = function() {
     try {
@@ -712,8 +688,6 @@ $(document).one(':storyready', function() {
         setup.setupKeyboardNavigation = function() {};
     }
     setup.setupKeyboardNavigation();
-    
-    setup.adjustLayoutForScreenSize();
 });
 
 $(document).on(':passagestart', function(ev) {
